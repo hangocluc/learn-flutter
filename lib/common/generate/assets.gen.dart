@@ -501,12 +501,23 @@ class $AssetsPngsGen {
   List<AssetGenImage> get values => [imgNoImage];
 }
 
+class $AssetsVideosGen {
+  const $AssetsVideosGen();
+
+  /// File path: assets/videos/.gitkeep
+  String get aGitkeep => 'assets/videos/.gitkeep';
+
+  /// List of all assets
+  List<String> get values => [aGitkeep];
+}
+
 class Assets {
   const Assets._();
 
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsPngsGen pngs = $AssetsPngsGen();
+  static const $AssetsVideosGen videos = $AssetsVideosGen();
   static const $EnvGen env = $EnvGen();
 }
 

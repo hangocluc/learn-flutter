@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:learn_java/features/data/entities/program_entity/program_entity.dart';
-import 'package:learn_java/features/presentation/pages/code_editor_page/code_editor_page.dart';
+import 'package:learn_java/features/presentation/pages/dart_playground_page/dart_playground_page.dart';
+import 'package:learn_java/features/presentation/pages/video_lesson_page/video_lesson_page.dart';
 
 class ProgramDetailPage extends StatelessWidget {
   final ProgramEntity program;
@@ -45,12 +46,27 @@ class ProgramDetailPage extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CodeEditorPage(programDetail: detail),
-            ),
-          );
+          if (detail.hasVideo) {
+            Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => VideoLessonPage(
+                  title: detail.title ?? 'Video',
+                  source: detail.videoUrl!.trim(),
+                ),
+              ),
+            );
+          } else {
+            Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => DartPlaygroundPage(
+                  title: detail.title,
+                  initialCode: detail.content?.trim() ?? '',
+                ),
+              ),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -61,13 +77,17 @@ class ProgramDetailPage extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: detail.hasVideo
+                      ? Colors.deepPurple.shade100
+                      : Colors.green.shade100,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  Icons.play_arrow,
+                  detail.hasVideo ? Icons.ondemand_video : Icons.play_arrow,
                   size: 24,
-                  color: Colors.green.shade600,
+                  color: detail.hasVideo
+                      ? Colors.deepPurple.shade600
+                      : Colors.green.shade600,
                 ),
               ),
               const SizedBox(width: 16),
@@ -84,7 +104,9 @@ class ProgramDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Click to open code editor',
+                      detail.hasVideo
+                          ? 'Chạm để xem video bài học'
+                          : 'Chạm để mở editor và chạy thử code',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,

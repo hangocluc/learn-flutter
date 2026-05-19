@@ -7,7 +7,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => 'でも';
+  String get appTitle => 'Flutter学習';
 
   @override
   String get lblTheme => 'テーマの変更';

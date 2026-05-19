@@ -29,6 +29,7 @@ ProgramDetailModel _$ProgramDetailModelFromJson(Map<String, dynamic> json) =>
       programId: json['programId'] as String?,
       title: json['title'] as String?,
       content: json['content'] as String?,
+      videoUrl: json['videoUrl'] as String?,
     );
 
 Map<String, dynamic> _$ProgramDetailModelToJson(ProgramDetailModel instance) =>
@@ -37,4 +38,5 @@ Map<String, dynamic> _$ProgramDetailModelToJson(ProgramDetailModel instance) =>
       'programId': instance.programId,
       'title': instance.title,
       'content': instance.content,
+      'videoUrl': instance.videoUrl,
     };

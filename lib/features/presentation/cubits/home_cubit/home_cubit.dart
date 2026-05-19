@@ -122,7 +122,6 @@ class HomeCubit extends Cubit<HomeState> {
               'HomeCubit: Profile data - completedLessons: $completedLessons, userScore: $userScore');
           // Create recent activities - show total progress
           if (data.isNotEmpty) {
-            final latestProfile = data.first as ProfileEntity;
             recentActivities = [
               {
                 'title': 'Total Score: ${userScore.toStringAsFixed(0)} points',

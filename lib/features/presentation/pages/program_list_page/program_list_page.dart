@@ -22,7 +22,7 @@ class _ProgramListPageState extends State<ProgramListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Java Programs'),
+        title: const Text('Flutter Programs'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [

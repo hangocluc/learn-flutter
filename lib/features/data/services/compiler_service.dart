@@ -1,10 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 
 class CompilerService {
-  final Dio _dio;
+  CompilerService();
 
-  CompilerService({required Dio dio}) : _dio = dio;
   final _channel = MethodChannel('java_executor');
 
   /// Compile and run Java code
@@ -12,9 +10,12 @@ class CompilerService {
     try {
       String output = await _channel.invokeMethod("compileJava", javaCode);
       output = output.toString().replaceFirst("ignoring input files", "");
-      output = output.toString().replaceFirst(
-          "processing /data/user/0/com.example.learn_java/files/class_output/JavaStudio.class...",
-          "").trim();
+      output = output
+          .toString()
+          .replaceFirst(
+              "processing /data/user/0/com.example.learn_java/files/class_output/JavaStudio.class...",
+              "")
+          .trim();
       return CompileResult(
         success: true,
         output: output,

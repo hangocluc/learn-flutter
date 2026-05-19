@@ -7,7 +7,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Demo';
+  String get appTitle => 'Learn Flutter';
 
   @override
   String get lblTheme => 'Change Theme';

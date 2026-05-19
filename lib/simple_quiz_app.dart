@@ -10,7 +10,7 @@ class SimpleQuizApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Java Quiz App',
+      title: 'Flutter Quiz App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
@@ -27,7 +27,7 @@ class QuizHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Java Quiz App'),
+        title: const Text('Flutter Quiz App'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
       ),
@@ -42,7 +42,7 @@ class QuizHomePage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Text(
-              'Welcome to Java Quiz!',
+              'Welcome to Flutter Quiz!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class QuizHomePage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Test your Java knowledge',
+              'Test your Flutter knowledge',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey,

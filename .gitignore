@@ -71,3 +71,6 @@ windows/runner/Debug/
 windows/runner/Release/
 windows/runner/x64/
 windows/runner/x86/
+
+# Local env overrides (do not commit secrets)
+env/.env_local

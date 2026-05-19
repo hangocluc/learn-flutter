@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:learn_java/features/presentation/cubits/lesson_cubit/lesson_cubit.dart';
 
 import '../common/l10n/generate/app_localizations.dart';
+import '../common/theme/app_theme.dart';
 import '../common/widget/app_overlay/overlay_widget.dart';
 import '../core/navigator/app_route_tracking.dart';
 import '../main.dart';
@@ -70,8 +71,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 themeMode: (state is ThemeStateSuccess)
                     ? state.themeMode
                     : ThemeMode.dark,
-                theme: ThemeData.light(),
-                darkTheme: ThemeData.dark(),
+                theme: AppTheme().lightTheme,
+                darkTheme: AppTheme().darkTheme,
                 initialRoute: RouteName.root,
                 navigatorObservers: [AppRouterTracking()],
                 navigatorKey: getNavigatorKeyByEnv(),

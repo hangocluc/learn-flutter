@@ -32,12 +32,16 @@ class ProgramDetailModel {
   final String? programId;
   final String? title;
   final String? content;
+  /// Network `https://...` / `http://...`, or bundled asset path `assets/videos/....mp4`.
+  @JsonKey(name: 'videoUrl')
+  final String? videoUrl;
 
   const ProgramDetailModel({
     this.id,
     this.programId,
     this.title,
     this.content,
+    this.videoUrl,
   });
 
   factory ProgramDetailModel.fromJson(Map<String, dynamic> json) =>

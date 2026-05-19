@@ -43,6 +43,7 @@ class ProgramRepositoryImpl implements ProgramRepository {
       programId: model.programId,
       title: model.title,
       content: model.content,
+      videoUrl: model.videoUrl,
     );
   }
 }

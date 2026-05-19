@@ -261,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 16),
             Text(
-              _displayName ?? 'Java Lab User',
+              _displayName ?? 'Flutter Lab User',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -270,7 +270,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 4),
             Text(
-              _email ?? 'user@javalab.com',
+              _email ?? 'user@flutterlab.dev',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white.withOpacity(0.8),

@@ -1,12 +1,12 @@
+import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:highlight/languages/dart.dart' as highlight_lang;
 
+/// DartPad-style dark editor (TextField + [CodeController] for highlight).
 class CodeEditorWidget extends StatefulWidget {
-  final String initialCode;
-  final Function(String) onCodeChanged;
-  final bool readOnly;
-
   const CodeEditorWidget({
     super.key,
     required this.initialCode,
@@ -14,23 +14,62 @@ class CodeEditorWidget extends StatefulWidget {
     this.readOnly = false,
   });
 
+  final String initialCode;
+  final ValueChanged<String> onCodeChanged;
+  final bool readOnly;
+
+  static const Color editorBg = Color(0xFF1E1E1E);
+  static const Color toolbarBg = Color(0xFF2D2D30);
+  static const Color cursorBlue = Color(0xFF168AFD);
+
+  static const EdgeInsets editorPadding = EdgeInsets.fromLTRB(16, 12, 16, 24);
+
+  /// VS2015 + punctuation / default text visible on dark bg.
+  static final Map<String, TextStyle> dartEditorTheme = {
+    ...vs2015Theme,
+    'root': vs2015Theme['root']!.copyWith(color: const Color(0xFFDCDCDC)),
+    'punctuation': const TextStyle(color: Color(0xFFD4D4D4)),
+  };
+
   @override
   State<CodeEditorWidget> createState() => _CodeEditorWidgetState();
 }
 
 class _CodeEditorWidgetState extends State<CodeEditorWidget> {
-  late TextEditingController _controller;
-  late FocusNode _focusNode;
+  late final CodeController _controller;
+  late final FocusNode _focusNode;
+
+  TextStyle get _monoStyle => GoogleFonts.robotoMono(
+        fontSize: 14,
+        height: 1.5,
+        color: const Color(0xFFDCDCDC),
+      );
+
+  /// Brackets stand out; `${...}` segments get an extra pass via patterns.
+  static final Map<String, TextStyle> _bracketStyles = {
+    r'[\(\)\{\}\[\]]': const TextStyle(color: Color(0xFFD7BA7D)),
+    r'\$\{[^}]*\}': const TextStyle(color: Color(0xFF9CDCFE)),
+  };
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialCode);
     _focusNode = FocusNode();
+    _controller = CodeController(
+      text: widget.initialCode.trim(),
+      language: highlight_lang.dart,
+      patternMap: _bracketStyles,
+    );
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    widget.onCodeChanged(_controller.text);
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -38,96 +77,82 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-        color: const Color(0xFF1E1E1E),
-      ),
+    return ColoredBox(
+      color: CodeEditorWidget.editorBg,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D2D30),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-            ),
+            height: 36,
+            color: CodeEditorWidget.toolbarBg,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                const Icon(Icons.code, color: Colors.white, size: 16),
+                Icon(Icons.description_outlined,
+                    size: 15, color: Colors.grey.shade500),
                 const SizedBox(width: 8),
-                const Text(
-                  'JavaStudio.java',
-                  style: TextStyle(
-                    color: Colors.white,
+                Text(
+                  'main.dart',
+                  style: GoogleFonts.robotoMono(
                     fontSize: 12,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: const BoxDecoration(
-                    color: Colors.orange,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
+                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
-          // Code Editor
           Expanded(
             child: widget.readOnly
                 ? SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
+                    padding: CodeEditorWidget.editorPadding,
                     child: HighlightView(
                       widget.initialCode,
-                      language: 'java',
-                      theme: vs2015Theme,
-                      textStyle: const TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 14,
-                      ),
+                      language: 'dart',
+                      theme: CodeEditorWidget.dartEditorTheme,
+                      textStyle: _monoStyle,
                     ),
                   )
-                : TextField(
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    maxLines: null,
-                    expands: true,
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                      color: Colors.white,
+                : CodeTheme(
+                    data: CodeThemeData(styles: CodeEditorWidget.dartEditorTheme),
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        brightness: Brightness.dark,
+                        textSelectionTheme: TextSelectionThemeData(
+                          cursorColor: CodeEditorWidget.cursorBlue,
+                          selectionColor:
+                              CodeEditorWidget.cursorBlue.withOpacity(0.35),
+                        ),
+                        inputDecorationTheme: const InputDecorationTheme(
+                          filled: true,
+                          fillColor: CodeEditorWidget.editorBg,
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: CodeEditorWidget.editorPadding,
+                          isDense: true,
+                        ),
+                      ),
+                      child: TextField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        expands: true,
+                        maxLines: null,
+                        minLines: null,
+                        textAlignVertical: TextAlignVertical.top,
+                        style: _monoStyle,
+                        cursorColor: CodeEditorWidget.cursorBlue,
+                        keyboardType: TextInputType.multiline,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        smartQuotesType: SmartQuotesType.disabled,
+                        decoration: const InputDecoration(
+                          hintText: '// Viết code Dart tại đây',
+                          hintStyle: TextStyle(color: Color(0xFF6A6A6A)),
+                        ),
+                      ),
                     ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(16),
-                    ),
-                    onChanged: widget.onCodeChanged,
                   ),
           ),
         ],

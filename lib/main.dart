@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
@@ -27,6 +30,7 @@ void main() async {
   await enableFirebaseAnalytics();
   registerNavigator(getIt);
   await setupEnv();
+  await logInitUrls();
   //setupAlice();
   await registerDependencies(getIt);
   configLoading();
@@ -49,16 +53,50 @@ Future<void> setupEnv() async {
     AppConstants.FLAVOR,
     defaultValue: AppConstants.STAGING,
   );
-  await dotenv.load(fileName: envConfig(flavor));
+  final envFileName = envConfig(flavor);
+  await dotenv.load(fileName: envFileName);
   final env = EnvNetwork.envNetworkFromConfigure();
+  final apiServer = env.apiServer.trim();
+  if (apiServer.isEmpty) {
+    throw StateError(
+      'Env load failed: `api_server` is empty. flavor=$flavor, envFile=$envFileName, loadedKeys=${dotenv.env.keys.toList()..sort()}',
+    );
+  }
   getIt.registerLazySingleton(
     () => Env(
       envNetwork: env,
-      isProduction: flavor == AppConstants.DEV,
+      isProduction: flavor == AppConstants.PROD,
     ),
   );
   await Future.delayed(const Duration(seconds: 2));
-  Logger().d("Env initial $flavor : ${env.apiServer}");
+  Logger().d("Env initial $flavor ($envFileName): $apiServer");
+}
+
+Future<void> logInitUrls() async {
+  final logger = Logger();
+
+  // Your API base URL (from env).
+  try {
+    final env = getIt<Env>();
+    logger.i(
+      'Init API baseUrl: ${env.envNetwork.apiServer} (production=${env.isProduction})',
+    );
+  } catch (_) {
+    // Env may not be registered; ignore.
+  }
+
+  // Dart VM Service URL (debug/profile).
+  if (!kReleaseMode) {
+    try {
+      final info = await developer.Service.getInfo();
+      final serverUri = info.serverUri;
+      if (serverUri != null) {
+        logger.i('VM Service: $serverUri');
+      }
+    } catch (_) {
+      // Not available on some platforms/modes.
+    }
+  }
 }
 
 GlobalKey<NavigatorState>? getNavigatorKeyByEnv() {

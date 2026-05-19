@@ -3,13 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
 import 'package:learn_java/common/app_shared_preferences/app_shared_preferences_key.dart';
 import 'package:learn_java/features/data/models/lesson_model/progress_request_model.dart';
+import 'package:learn_java/features/data/models/quiz_model/topic_model.dart';
 import 'package:learn_java/features/data/providers/lesson_service/lesson_service.dart';
+import 'package:learn_java/features/domain/entities/src/lesson/lesson_entity.dart';
+import 'package:learn_java/features/presentation/pages/topic_lesson_detail_page/topic_lesson_detail_page.dart';
+import 'package:learn_java/features/presentation/pages/youtube_video_page/youtube_video_page.dart';
 import 'package:learn_java/main.dart';
 import '../../cubits/lesson_cubit/lesson_cubit.dart';
 import '../../cubits/lesson_cubit/lesson_state.dart';
-import 'package:learn_java/features/domain/entities/src/lesson/lesson_entity.dart';
 import '../quiz_page/quiz_page.dart';
-import '../topic_page/topic_page.dart';
 
 class LessonsPage extends StatefulWidget {
   const LessonsPage({super.key});
@@ -41,32 +43,179 @@ class _LessonsPageState extends State<LessonsPage> {
         await context.read<LessonCubit>().loadLessons();
       },
       child: ListView.separated(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: lessons.length,
         separatorBuilder: (_, __) => const Divider(height: 1),
-        itemBuilder: (_, index) {
-          final item = lessons[index];
-          return ListTile(
-            title: Text(item.title),
-            subtitle: Text('Topics: ${item.totalTopic} • Quiz: 1'),
-            leading: CircleAvatar(child: Text('${index + 1}')),
-            trailing: item.quiz != null
-                ? IconButton(
-                    icon: const Icon(Icons.quiz),
-                    onPressed: () => _startQuiz(context, item.quiz!, true),
-                  )
-                : null,
-            onTap: item.quiz != null
-                ? () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TopicPage(
-                            lesson: item,
-                            onTap: () =>
-                                _startQuiz(context, item.quiz!, false)),
+        itemBuilder: (_, index) =>
+            _buildChapterTile(lessons[index], index),
+      ),
+    );
+  }
+
+  Widget _buildChapterTile(LessonEntity lesson, int chapterIndex) {
+    final hasVideoLesson = lesson.topics.any((t) => t.hasVideo);
+    final scheme = Theme.of(context).colorScheme;
+
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        leading: CircleAvatar(
+          backgroundColor: scheme.primary.withOpacity(0.12),
+          foregroundColor: scheme.primary,
+          child: Text(
+            '${chapterIndex + 1}',
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
+        ),
+        title: Text(
+          lesson.title,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+        subtitle: Text(
+          'Topics: ${lesson.totalTopic} • Quiz: ${lesson.quiz != null ? 1 : 0}'
+          '${hasVideoLesson ? ' • Có video' : ''}',
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (hasVideoLesson)
+              Icon(
+                Icons.play_circle_outline,
+                color: scheme.primary,
+                size: 22,
+              ),
+            if (lesson.quiz != null)
+              IconButton(
+                icon: const Icon(Icons.quiz_outlined),
+                tooltip: 'Làm Quiz',
+                onPressed: () => _startQuiz(context, lesson.quiz!, true),
+              ),
+          ],
+        ),
+        children: lesson.topics.isEmpty
+            ? const [
+                ListTile(
+                  dense: true,
+                  title: Text('Chưa có bài học trong chương này'),
+                ),
+              ]
+            : [
+                for (var i = 0; i < lesson.topics.length; i++)
+                  _buildTopicTile(
+                    lesson: lesson,
+                    topic: lesson.topics[i],
+                    topicIndex: i,
+                  ),
+                if (lesson.quiz != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () =>
+                            _startQuiz(context, lesson.quiz!, false),
+                        icon: const Icon(Icons.quiz_outlined, size: 20),
+                        label: const Text('Làm Quiz chương này'),
                       ),
-                    )
-                : null,
-          );
-        },
+                    ),
+                  ),
+              ],
+      ),
+    );
+  }
+
+  Widget _buildTopicTile({
+    required LessonEntity lesson,
+    required Topics topic,
+    required int topicIndex,
+  }) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Material(
+        color: Theme.of(context).cardTheme.color ?? scheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: BorderSide(
+            color: scheme.outlineVariant.withOpacity(0.45),
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => _openTopicLesson(lesson, topic, topicIndex),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        topic.title ?? 'Bài ${topicIndex + 1}',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Chạm để đọc nội dung bài học',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (topic.hasVideo)
+                  IconButton(
+                    icon: Icon(
+                      Icons.play_circle_outline,
+                      color: scheme.primary,
+                    ),
+                    tooltip: 'Xem video',
+                    onPressed: () => _openVideo(topic),
+                  ),
+                Icon(
+                  Icons.chevron_right,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openTopicLesson(
+    LessonEntity lesson,
+    Topics topic,
+    int topicIndex,
+  ) {
+    _markLessonStarted(lesson.id);
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => TopicLessonDetailPage(
+          topic: topic,
+          topicIndex: topicIndex,
+          lessonTitle: lesson.title,
+        ),
+      ),
+    );
+  }
+
+  void _openVideo(Topics topic) {
+    final link = topic.videoLink?.trim();
+    if (link == null || link.isEmpty) return;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => YoutubeVideoPage(
+          title: topic.title ?? 'Video bài học',
+          videoLink: link,
+        ),
       ),
     );
   }
@@ -97,8 +246,8 @@ class _LessonsPageState extends State<LessonsPage> {
       final request = ProgressRequestModel(
         userId: userId,
         lessonId: lessonId,
-        status: 0, // learning
-        quizStatus: 0, // quiz not finished yet
+        status: 0,
+        quizStatus: 0,
       );
       await _lessonService.updateProcess(request);
     } catch (_) {}

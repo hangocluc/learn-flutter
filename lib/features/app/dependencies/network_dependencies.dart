@@ -86,9 +86,5 @@ Future<void> registerNetworkDependencies(GetIt sl) async {
     ),
   );
 
-  sl.registerFactory<CompilerService>(
-    () => CompilerService(
-      dio: sl.get<Dio>(instanceName: INSTANCE_UNAUTH_DIO),
-    ),
-  );
+  sl.registerFactory<CompilerService>(() => CompilerService());
 }

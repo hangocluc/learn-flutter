@@ -32,10 +32,22 @@ class EnvNetwork {
       "api_server",
       fallback: "",
     );
-    final apiConnectTimeout = API_CONNECT_TIMEOUT_DEFAULT;
-    final apiReceiverTimeout = API_RECEIVER_TIMEOUT_DEFAULT;
-    final apiSendTimeout = API_SEND_TIMEOUT_DEFAULT;
-    final apiContentType = dotenv.get("api_content_type");
+    final apiConnectTimeout = int.tryParse(
+          dotenv.maybeGet("api_connect_timeout") ?? "",
+        ) ??
+        API_CONNECT_TIMEOUT_DEFAULT;
+    final apiReceiverTimeout = int.tryParse(
+          dotenv.maybeGet("api_receiver_timeout") ?? "",
+        ) ??
+        API_RECEIVER_TIMEOUT_DEFAULT;
+    final apiSendTimeout = int.tryParse(
+          dotenv.maybeGet("api_send_timeout") ?? "",
+        ) ??
+        API_SEND_TIMEOUT_DEFAULT;
+    final apiContentType = dotenv.get(
+      "api_content_type",
+      fallback: "application/json",
+    );
 
     return EnvNetwork(
         apiServer: apiServer,

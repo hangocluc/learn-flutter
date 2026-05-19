@@ -17,11 +17,15 @@ class ProgramDetailEntity {
   final String? programId;
   final String? title;
   final String? content;
+  final String? videoUrl;
 
   const ProgramDetailEntity({
     this.id,
     this.programId,
     this.title,
     this.content,
+    this.videoUrl,
   });
+
+  bool get hasVideo => (videoUrl?.trim().isNotEmpty ?? false);
 }

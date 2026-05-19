@@ -98,7 +98,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In ja, this message translates to:
-  /// **'でも'**
+  /// **'Flutter学習'**
   String get appTitle;
 
   /// No description provided for @lblTheme.
