@@ -1,0 +1,54 @@
+@startuml seq_04_lessons
+!include ../_style.puml
+title Sơ đồ tuần tự — Tab Lesson (danh sách & mở bài)
+
+actor "Người dùng" as user
+boundary "LessonsPage" as ui
+control "LessonCubit" as cubit
+control "LessonUseCase" as uc
+control "LessonRepository" as repo
+boundary "TopicLessonDetail\nYoutubeVideoPage" as detail
+control "LessonService" as svc
+database "Backend API" as be
+entity "AppSharedPreferences" as prefs
+
+user -> ui : Mở tab Lesson
+activate ui
+
+ui -> cubit : loadLessons()
+activate cubit
+cubit -> cubit : emit(Loading)
+cubit -> uc : call(NoParams)
+uc -> repo : getAllLessons()
+repo -> be : GET /api/get-all-in-lesson
+be --> repo : LessonModel[]
+repo --> uc : List<LessonEntity>
+uc --> cubit : Either Right / Left
+cubit -> cubit : emit(Success / Failure)
+cubit --> ui : danh sách chương + topics
+deactivate cubit
+
+user -> ui : Chạm topic / video / quiz
+alt Đọc nội dung topic
+  ui -> detail : Navigator → TopicLessonDetailPage
+  detail --> user : Markdown / nội dung bài
+else Xem video YouTube
+  ui -> detail : YoutubeVideoPage(videoId)
+  detail --> user : Phát video
+else Bắt đầu học (progress)
+  ui -> svc : updateProcess (mark nhẹ)
+  svc -> be : POST /api/update-process
+  be --> svc : OK
+else Làm Quiz
+  ui -> ui : Navigator → QuizPage
+  note right of ui
+    Xem seq_05_quiz.puml
+  end note
+end
+
+user -> ui : Kéo RefreshIndicator
+ui -> cubit : loadLessons()
+
+deactivate ui
+
+@enduml

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences_key.dart';
-import 'package:learn_java/features/data/models/lesson_model/progress_request_model.dart';
-import 'package:learn_java/features/data/models/quiz_model/topic_model.dart';
-import 'package:learn_java/features/data/providers/lesson_service/lesson_service.dart';
-import 'package:learn_java/features/domain/entities/src/lesson/lesson_entity.dart';
-import 'package:learn_java/features/presentation/pages/topic_lesson_detail_page/topic_lesson_detail_page.dart';
-import 'package:learn_java/features/presentation/pages/youtube_video_page/youtube_video_page.dart';
-import 'package:learn_java/main.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences_key.dart';
+import 'package:learn_flutter/features/data/models/lesson_model/progress_request_model.dart';
+import 'package:learn_flutter/features/data/models/quiz_model/topic_model.dart';
+import 'package:learn_flutter/features/data/providers/lesson_service/lesson_service.dart';
+import 'package:learn_flutter/features/domain/entities/src/lesson/lesson_entity.dart';
+import 'package:learn_flutter/features/presentation/pages/topic_lesson_detail_page/topic_lesson_detail_page.dart';
+import 'package:learn_flutter/features/presentation/pages/youtube_video_page/youtube_video_page.dart';
+import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
+import 'package:learn_flutter/main.dart';
 import '../../cubits/lesson_cubit/lesson_cubit.dart';
 import '../../cubits/lesson_cubit/lesson_state.dart';
 import '../quiz_page/quiz_page.dart';
@@ -176,7 +177,7 @@ class _LessonsPageState extends State<LessonsPage> {
                       color: scheme.primary,
                     ),
                     tooltip: 'Xem video',
-                    onPressed: () => _openVideo(topic),
+                    onPressed: () => _openVideo(lesson, topic),
                   ),
                 Icon(
                   Icons.chevron_right,
@@ -202,12 +203,13 @@ class _LessonsPageState extends State<LessonsPage> {
           topic: topic,
           topicIndex: topicIndex,
           lessonTitle: lesson.title,
+          lessonId: lesson.id,
         ),
       ),
     );
   }
 
-  void _openVideo(Topics topic) {
+  void _openVideo(LessonEntity lesson, Topics topic) {
     final link = topic.videoLink?.trim();
     if (link == null || link.isEmpty) return;
     Navigator.of(context).push<void>(
@@ -215,6 +217,9 @@ class _LessonsPageState extends State<LessonsPage> {
         builder: (context) => YoutubeVideoPage(
           title: topic.title ?? 'Video bài học',
           videoLink: link,
+          lessonId: lesson.id,
+          topicId: topic.sId,
+          lessonTitle: lesson.title,
         ),
       ),
     );
@@ -265,7 +270,30 @@ class _LessonsPageState extends State<LessonsPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is LessonStateFailure) {
-            return Center(child: Text(state.message));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(state.message, textAlign: TextAlign.center),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () =>
+                          context.read<LessonCubit>().loadLessons(),
+                      child: const Text('Thử lại'),
+                    ),
+                    LessonFeedbackErrorBanner(
+                      params: LessonFeedbackParams(
+                        defaultErrorType: 'other',
+                        errorDetail: state.message,
+                      ),
+                      message: 'Không tải được danh sách bài học?',
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
           if (state is LessonStateSuccess) {
             return _buildList(state.lessons);

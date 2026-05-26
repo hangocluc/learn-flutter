@@ -1,30 +1,54 @@
 {
   "project_info": {
-    "project_number": "1016646892735",
-    "project_id": "applearnjava",
-    "storage_bucket": "applearnjava.firebasestorage.app"
+    "project_number": "377464465984",
+    "project_id": "applea-e4729",
+    "storage_bucket": "applea-e4729.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1016646892735:android:66a502721371d955d51a0a",
+        "mobilesdk_app_id": "1:377464465984:android:9a6fcb5facc47dfa5b0da5",
         "android_client_info": {
-          "package_name": "com.example.learn_java"
+          "package_name": "com.example.learn_flutter"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "377464465984-r5s2gufksvouenmnienrahnuosk0gjpf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.learn_flutter",
+            "certificate_hash": "4959966efce3568e4a9e6731dfb29274451fa4ec"
+          }
+        },
+        {
+          "client_id": "377464465984-i59s6f6utmsaiebt77p5cvkloeh62mgv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCKRSqa1yPPOYwO4sHeRtA-3n00PCIm6OI"
+          "current_key": "AIzaSyAdJRTN34EWL3jxr5ukmTeb-fNGIG1V710"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "377464465984-i59s6f6utmsaiebt77p5cvkloeh62mgv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "377464465984-j79945l5b94objm2fsc613uinroo2i48.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.learnFlutter"
+              }
+            }
+          ]
         }
       }
     }
   ],
   "configuration_version": "1"
 }
-

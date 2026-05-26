@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_java/features/domain/usecases/src/profile/profile_usecase.dart'
+import 'package:learn_flutter/features/domain/usecases/src/profile/profile_usecase.dart'
     as profile_uc;
-import 'package:learn_java/features/domain/usecases/src/lesson_usecase.dart';
-import 'package:learn_java/features/domain/usecases/program_usecase.dart';
-import 'package:learn_java/features/domain/entities/src/profile/profile_entity.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences_key.dart';
-import 'package:learn_java/core/storage/storage_manager.dart';
+import 'package:learn_flutter/features/domain/usecases/src/lesson_usecase.dart';
+import 'package:learn_flutter/features/domain/usecases/program_usecase.dart';
+import 'package:learn_flutter/features/domain/entities/src/profile/profile_entity.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences_key.dart';
+import 'package:learn_flutter/core/storage/storage_manager.dart';
 import '../../../../core/base/src/base_usecase.dart';
 import 'home_state.dart';
 

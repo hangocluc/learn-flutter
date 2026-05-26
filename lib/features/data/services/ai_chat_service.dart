@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:learn_java/features/data/services/gemini_chat_service.dart';
-import 'package:learn_java/features/data/services/groq_chat_service.dart';
-import 'package:learn_java/features/data/services/openai_chat_service.dart';
+import 'package:learn_flutter/features/data/services/gemini_chat_service.dart';
+import 'package:learn_flutter/features/data/services/groq_chat_service.dart';
+import 'package:learn_flutter/features/data/services/openai_chat_service.dart';
 
 enum AiChatProvider { groq, gemini, openai }
 

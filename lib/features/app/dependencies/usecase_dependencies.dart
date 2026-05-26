@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
-import 'package:learn_java/features/domain/usecases/program_usecase.dart';
-import 'package:learn_java/features/domain/usecases/src/lesson_usecase.dart';
-import 'package:learn_java/features/domain/usecases/src/chat/chat_usecase.dart';
+import 'package:learn_flutter/features/domain/usecases/program_usecase.dart';
+import 'package:learn_flutter/features/domain/usecases/src/lesson_usecase.dart';
+import 'package:learn_flutter/features/domain/usecases/src/chat/chat_usecase.dart';
 import '../../domain/usecases/usecase.dart';
 import '../../domain/usecases/src/profile/profile_usecase.dart' as profile_uc;
 

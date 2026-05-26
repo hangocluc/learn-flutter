@@ -1,0 +1,54 @@
+@startuml seq_07_profile
+!include ../_style.puml
+title Sơ đồ tuần tự — Tab Profile (điểm & bảng xếp hạng)
+
+actor "Người dùng" as user
+boundary "ProfilePage" as ui
+control "ProfileCubit" as cubit
+control "ProfileUsecase" as uc
+control "ProfileRepository" as repo
+database "Backend API" as be
+entity "StorageManager" as storage
+
+user -> ui : Mở tab Profile
+activate ui
+
+ui -> storage : getUserId()
+storage --> ui : userId
+
+ui -> cubit : loadProfileData(userId)
+activate cubit
+cubit -> cubit : emit(Loading)
+
+par Điểm theo bài
+  cubit -> uc : call(userId)
+  uc -> repo : getProfileScore(userId)
+  repo -> be : GET /api/get-score-profile
+  be --> repo : ProfileEntity[]
+  repo --> uc : scores
+  uc --> cubit : profileScores
+and Bảng xếp hạng
+  cubit -> uc : getProfileRank()
+  uc -> repo : getTopUsers()
+  repo -> be : GET /api/get-top-user
+  be --> repo : RankUserEntity[]
+  repo --> uc : rank list
+  uc --> cubit : userRank, userScore
+end
+
+alt Lỗi
+  cubit -> cubit : emit(Failure)
+else OK
+  cubit -> cubit : emit(Success)
+end
+
+cubit --> ui : Biểu đồ điểm, rank list
+ui --> user : Thống kê cá nhân
+
+user -> ui : Nhấn Refresh
+ui -> cubit : loadProfileData(userId)
+
+deactivate cubit
+deactivate ui
+
+@enduml

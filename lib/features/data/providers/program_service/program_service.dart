@@ -1,6 +1,6 @@
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
-import 'package:learn_java/features/data/models/program_model/program_model.dart';
+import 'package:learn_flutter/features/data/models/program_model/program_model.dart';
 
 part 'program_service.g.dart';
 

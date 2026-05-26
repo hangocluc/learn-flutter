@@ -1,8 +1,8 @@
-import 'package:learn_java/features/data/entities/program_entity/program_entity.dart';
-import 'package:learn_java/features/data/models/program_model/program_model.dart';
-import 'package:learn_java/core/base/src/api_response.dart';
-import 'package:learn_java/features/data/providers/program_service/program_service.dart';
-import 'package:learn_java/features/data/repositories/src/program/program_repository.dart';
+import 'package:learn_flutter/features/data/entities/program_entity/program_entity.dart';
+import 'package:learn_flutter/features/data/models/program_model/program_model.dart';
+import 'package:learn_flutter/core/base/src/api_response.dart';
+import 'package:learn_flutter/features/data/providers/program_service/program_service.dart';
+import 'package:learn_flutter/features/data/repositories/src/program/program_repository.dart';
 
 class ProgramRepositoryImpl implements ProgramRepository {
   final ProgramService service;

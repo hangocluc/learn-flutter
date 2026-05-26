@@ -1,0 +1,45 @@
+@startuml seq_06_program
+!include ../_style.puml
+title Sơ đồ tuần tự — Tab Program (chương trình học)
+
+actor "Người dùng" as user
+boundary "ProgramPage" as ui
+boundary "ProgramListPage\nProgramDetailPage" as detail
+control "ProgramCubit" as cubit
+control "ProgramUsecase" as uc
+control "ProgramRepository" as repo
+database "Backend API\n/api/get-all-in-program" as be
+
+user -> ui : Mở tab Program
+activate ui
+
+ui -> cubit : loadPrograms()
+activate cubit
+cubit -> cubit : emit(Loading)
+cubit -> uc : getAllPrograms()
+uc -> repo : getAllPrograms()
+repo -> be : GET /api/get-all-in-program
+be --> repo : ProgramResponse[]
+repo --> uc : ApiResponse
+uc --> cubit : programs hoặc lỗi
+cubit -> cubit : emit(Loaded / Error)
+cubit --> ui : Grid / danh sách program
+deactivate cubit
+
+user -> ui : Chọn một program
+ui -> detail : Navigator → ProgramListPage
+activate detail
+
+detail -> detail : Hiển thị topics / lessons\ncủa program
+user -> detail : Chọn bài trong program
+detail -> detail : ProgramDetailPage\n(nội dung, link học)
+
+detail --> user : Nội dung chương trình
+deactivate detail
+
+user -> ui : Pull refresh
+ui -> cubit : refreshData() → loadPrograms()
+
+deactivate ui
+
+@enduml

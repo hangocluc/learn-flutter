@@ -1,5 +1,5 @@
-import 'package:learn_java/features/data/providers/network_service/src/app_service.dart';
-import 'package:learn_java/features/domain/repositories/repositories.dart';
+import 'package:learn_flutter/features/data/providers/network_service/src/app_service.dart';
+import 'package:learn_flutter/features/domain/repositories/repositories.dart';
 
 import '../../../../../core/base/src/api_response.dart';
 import '../../../models/models.dart';

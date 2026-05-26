@@ -6,6 +6,12 @@ class LessonApiPath {
   static const updateProcess = '/api/update-process';
 }
 
+/// Feedback APIs on BE (lesson content vs system/app).
+class FeedbackApiPath {
+  static const insertLessonFeedback = '/api/insert-lesson-feedback';
+  static const insertSystemFeedback = '/api/insert-system-feedback';
+}
+
 class ChatApiPath {
   static const getCommentsByQuestion = '/api/get-comment-by-question';
   static const updateComment = '/api/update-comment';

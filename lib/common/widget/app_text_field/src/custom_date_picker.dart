@@ -1,4 +1,4 @@
-import 'package:learn_java/core/extension/src/date_time_extension.dart';
+import 'package:learn_flutter/core/extension/src/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:learn_java/features/data/models/quiz_model/topic_model.dart';
+import 'package:learn_flutter/features/data/models/quiz_model/topic_model.dart';
 import '../quiz_model/quiz_model.dart';
 
 part 'lesson_model.g.dart';

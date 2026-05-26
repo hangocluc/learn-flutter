@@ -13,7 +13,7 @@ class CompilerService {
       output = output
           .toString()
           .replaceFirst(
-              "processing /data/user/0/com.example.learn_java/files/class_output/JavaStudio.class...",
+              "processing /data/user/0/com.example.learn_flutter/files/class_output/JavaStudio.class...",
               "")
           .trim();
       return CompileResult(

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_java/features/data/entities/program_entity/program_entity.dart';
-import 'package:learn_java/features/domain/usecases/program_usecase.dart';
+import 'package:learn_flutter/features/data/entities/program_entity/program_entity.dart';
+import 'package:learn_flutter/features/domain/usecases/program_usecase.dart';
 
 part 'program_cubit_state.dart';
 

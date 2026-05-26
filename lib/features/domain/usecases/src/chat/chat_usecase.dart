@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:learn_java/features/domain/entities/src/chat/chat_entity.dart';
-import 'package:learn_java/features/domain/repositories/src/chat/chat_repository.dart';
+import 'package:learn_flutter/features/domain/entities/src/chat/chat_entity.dart';
+import 'package:learn_flutter/features/domain/repositories/src/chat/chat_repository.dart';
 
 class ChatUsecase {
   final ChatRepository repository;

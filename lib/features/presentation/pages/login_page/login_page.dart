@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:learn_java/main.dart';
+import 'package:learn_flutter/main.dart';
 import '../../../../core/storage/storage_manager.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences_key.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences_key.dart';
 import '../../../app/routes/src/routes_name.dart';
 import '../../../data/models/src/user_model.dart';
+import '../../../data/firebase_service/fcm_messaging_service.dart';
 import '../../../domain/usecases/src/demo_usecase.dart';
 
 class LoginPage extends StatefulWidget {
@@ -30,13 +31,14 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = true;
         });
 
-        // Create User object from Google account info
+        final fcmToken = await getIt<FcmMessagingService>().getToken();
+        debugPrint('FCM token for BE: $fcmToken');
+
         final user = UserModel(
           gmail: account.email,
           username: account.displayName,
           imageUrl: account.photoUrl?.toString(),
-          tokenDevice:
-              'flutter_device_token', // You can get real device token here
+          tokenDevice: fcmToken ?? 'aa',
         );
 
         try {
@@ -55,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
               if (userId != null && userId.isNotEmpty) {
                 StorageManager.saveUserId(userId);
                 StorageManager.saveUserName(data?.username ?? '');
-                StorageManager.saveUserEmail(data?.gmail ?? '');
+                StorageManager.saveUserEmail(data?.gmail ?? account.email);
                 StorageManager.saveUserImage(data?.imageUrl ?? '');
 
                 // Also persist to AppSharedPreferences for quiz/progress flow

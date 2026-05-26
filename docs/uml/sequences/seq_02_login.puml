@@ -1,0 +1,60 @@
+@startuml seq_02_login
+!include ../_style.puml
+title Sơ đồ tuần tự — Đăng nhập Google (App Mobile)
+
+actor "Người dùng" as user
+boundary "LoginPage" as ui
+control "GoogleSignIn" as gsign
+control "FcmMessaging\nService" as fcm
+control "DemoUsecase" as uc
+control "AppRepository" as repo
+database "Google OAuth" as google
+database "Backend API\n/api/insert-user\n/api/get-user" as be
+entity "StorageManager\nAppSharedPreferences" as storage
+
+user -> ui : Nhấn "Đăng nhập Google"
+activate ui
+
+ui -> gsign : signIn()
+activate gsign
+gsign -> google : OAuth flow
+google --> gsign : GoogleSignInAccount
+deactivate gsign
+
+alt Hủy đăng nhập
+  gsign --> ui : account == null
+  ui --> user : Không làm gì
+else Đăng nhập thành công
+  ui -> fcm : getToken()
+  activate fcm
+  fcm --> ui : tokenDevice
+  deactivate fcm
+
+  ui -> ui : Tạo UserModel\n(gmail, username, image, token)
+
+  ui -> uc : getOrCreateNewUser(user)
+  activate uc
+  uc -> repo : getOrCreateNewUser(user)
+  activate repo
+  repo -> be : POST insert / GET user
+  activate be
+  be --> repo : UserModel + userId
+  deactivate be
+  repo --> uc : ApiResponse<UserModel>
+  deactivate repo
+  uc --> ui : Either Right(data) / Left(error)
+  deactivate uc
+
+  alt Thành công
+    ui -> storage : saveUserId, saveUserName\nsetString(userId)
+    storage --> ui : OK
+    ui -> ui : pushNamedAndRemoveUntil(/main)
+    ui --> user : MainPage (5 tab)
+  else Lỗi API
+    ui --> user : Hiển thị lỗi / dừng loading
+  end
+end
+
+deactivate ui
+
+@enduml

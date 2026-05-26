@@ -1,0 +1,59 @@
+@startuml seq_03_home
+!include ../_style.puml
+title Sơ đồ tuần tự — Tab Home (tải dashboard)
+
+actor "Người dùng" as user
+boundary "HomePage" as ui
+control "HomeCubit" as cubit
+control "ProfileUsecase" as puc
+control "LessonUseCase" as luc
+control "ProgramUsecase" as pruc
+control "Repositories" as repo
+database "Backend API" as be
+entity "AppSharedPreferences\nStorageManager" as storage
+
+user -> ui : Mở tab Home
+activate ui
+
+ui -> cubit : loadHomeData()
+activate cubit
+cubit -> cubit : emit(Loading)
+cubit -> storage : get userId
+storage --> cubit : userId (hoặc fallback)
+
+par Tiến độ người dùng
+  cubit -> puc : get progress / score
+  puc -> repo : ProfileRepository
+  repo -> be : GET /api/get-all-process\nGET /api/get-score-profile
+  be --> repo : progress, score, rank
+  repo --> puc : data
+  puc --> cubit : completedLessons, userScore...
+and Danh sách bài học
+  cubit -> luc : call(NoParams)
+  luc -> repo : LessonRepository
+  repo -> be : GET /api/get-all-in-lesson
+  be --> repo : lessons[]
+  repo --> luc : List<LessonEntity>
+  luc --> cubit : totalLessons
+and Chương trình
+  cubit -> pruc : getAllPrograms()
+  pruc -> repo : ProgramRepository
+  repo -> be : GET /api/get-all-in-program
+  be --> repo : programs[]
+  repo --> pruc : data
+  pruc --> cubit : exploredPrograms, totalPrograms
+end
+
+alt Timeout / lỗi
+  cubit -> cubit : emit(Success với giá trị mặc định 0)
+else Thành công
+  cubit -> cubit : emit(HomeStateSuccess)
+end
+
+cubit --> ui : BlocBuilder rebuild
+ui --> user : Hiển thị thống kê,\nhoạt động gần đây,\nshortcut điều hướng tab
+
+deactivate cubit
+deactivate ui
+
+@enduml

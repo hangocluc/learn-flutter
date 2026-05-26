@@ -1,0 +1,49 @@
+@startuml seq_10_fcm
+!include ../_style.puml
+title Sơ đồ tuần tự — Firebase Cloud Messaging (thông báo đẩy)
+
+actor "Người dùng" as user
+boundary "LoginPage /\nApp" as ui
+control "FcmMessaging\nService" as fcm
+control "DemoUsecase" as uc
+control "FcmNotification\nHelper" as notif
+database "Firebase FCM" as firebase
+database "Backend API" as be
+entity "AppSharedPreferences" as prefs
+
+== Khởi tạo (main.dart) ==
+ui -> fcm : initialize()
+activate fcm
+fcm -> firebase : requestPermission()
+firebase --> fcm : authorized
+fcm -> firebase : getToken()
+firebase --> fcm : FCM token
+fcm -> prefs : persist token
+fcm -> fcm : onTokenRefresh.listen\nonMessage / onMessageOpenedApp
+deactivate fcm
+
+== Đồng bộ token khi đăng nhập ==
+user -> ui : Google Sign In thành công
+ui -> fcm : getToken()
+fcm --> ui : tokenDevice
+ui -> uc : getOrCreateNewUser(\nUserModel + tokenDevice)
+uc -> be : lưu token thiết bị
+be --> uc : OK
+
+== Nhận thông báo foreground ==
+firebase -> fcm : onMessage(RemoteMessage)
+activate fcm
+fcm -> notif : showFcmNotification(message)
+notif --> user : Local notification
+deactivate fcm
+
+== Token refresh ==
+firebase -> fcm : onTokenRefresh(newToken)
+fcm -> prefs : persist
+fcm -> uc : syncTokenToBackend(token)
+uc -> be : cập nhật user device token
+
+user -> fcm : Tap notification\n(onMessageOpenedApp)
+fcm --> user : Mở app / log data payload
+
+@enduml

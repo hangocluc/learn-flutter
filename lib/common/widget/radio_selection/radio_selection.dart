@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:learn_java/core/extension/src/string_extension.dart';
+import 'package:learn_flutter/core/extension/src/string_extension.dart';
 import '../../theme/app_color.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_typography.dart';

@@ -52,12 +52,17 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.1016646892735-e5e7sbu19iuqah80toffvr4ge8vl39qa</string>
+				<string>com.googleusercontent.apps.377464465984-j79945l5b94objm2fsc613uinroo2i48</string>
 			</array>
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-    <string>1016646892735-e5e7sbu19iuqah80toffvr4ge8vl39qa.apps.googleusercontent.com</string>
+	<string>377464465984-j79945l5b94objm2fsc613uinroo2i48.apps.googleusercontent.com</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>https</string>

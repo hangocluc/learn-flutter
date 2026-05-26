@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1016646892735-e5e7sbu19iuqah80toffvr4ge8vl39qa.apps.googleusercontent.com</string>
+	<string>377464465984-j79945l5b94objm2fsc613uinroo2i48.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1016646892735-e5e7sbu19iuqah80toffvr4ge8vl39qa</string>
+	<string>com.googleusercontent.apps.377464465984-j79945l5b94objm2fsc613uinroo2i48</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>1016646892735-46ore8n2ocsn7sa9f4a6ngp46p1ldsmo.apps.googleusercontent.com</string>
+	<string>377464465984-r5s2gufksvouenmnienrahnuosk0gjpf.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDDjR-TCTfoTCBx01PyI06AJNuZP_dlcZA</string>
+	<string>AIzaSyCyBkRk1y3JtLAEOJHuwLJ-R36cXutKpKI</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1016646892735</string>
+	<string>377464465984</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.learnJava</string>
+	<string>com.example.learnFlutter</string>
 	<key>PROJECT_ID</key>
-	<string>applearnjava</string>
+	<string>applea-e4729</string>
 	<key>STORAGE_BUCKET</key>
-	<string>applearnjava.firebasestorage.app</string>
+	<string>applea-e4729.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1016646892735:ios:735665855cc19033d51a0a</string>
+	<string>1:377464465984:ios:b58f74f848bb1a955b0da5</string>
 </dict>
 </plist>

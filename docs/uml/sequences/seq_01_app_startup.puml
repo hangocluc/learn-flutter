@@ -1,0 +1,41 @@
+@startuml seq_01_app_startup
+!include ../_style.puml
+title Sơ đồ tuần tự — Khởi động ứng dụng (main.dart)
+
+actor "Người dùng" as user
+boundary "MyApp" as app
+control "Dependencies" as di
+control "FcmMessaging\nService" as fcm
+database "Firebase" as firebase
+database "Backend\n(Env URL)" as be
+
+user -> app : Mở app
+activate app
+
+app -> firebase : initFirebase()\nenableAnalytics()
+activate firebase
+firebase --> app : OK
+deactivate firebase
+
+app -> di : registerDependencies()\nsetupEnv(), registerNavigator()
+activate di
+di --> app : GetIt ready
+deactivate di
+
+app -> fcm : initialize()
+activate fcm
+fcm -> firebase : requestPermission()\ngetToken()
+firebase --> fcm : FCM token
+fcm -> fcm : setup local notifications\nonMessage / onTokenRefresh
+fcm --> app : OK
+deactivate fcm
+
+app -> app : runApp(MyApp)\nMaterialApp → LoginPage (/)
+deactivate app
+
+note over be
+  Base URL từ .env
+  (dev / staging / prod)
+end note
+
+@enduml

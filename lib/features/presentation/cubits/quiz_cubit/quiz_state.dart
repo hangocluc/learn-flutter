@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:learn_java/features/domain/entities/src/lesson/lesson_entity.dart';
+import 'package:learn_flutter/features/domain/entities/src/lesson/lesson_entity.dart';
 
 sealed class QuizState extends Equatable {
   const QuizState();

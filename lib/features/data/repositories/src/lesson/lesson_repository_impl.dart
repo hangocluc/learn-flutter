@@ -1,10 +1,10 @@
-import 'package:learn_java/features/data/providers/lesson_service/lesson_service.dart';
-import 'package:learn_java/features/domain/entities/src/lesson/lesson_entity.dart';
-import 'package:learn_java/features/domain/repositories/src/lesson/lesson_repository.dart';
+import 'package:learn_flutter/features/data/providers/lesson_service/lesson_service.dart';
+import 'package:learn_flutter/features/domain/entities/src/lesson/lesson_entity.dart';
+import 'package:learn_flutter/features/domain/repositories/src/lesson/lesson_repository.dart';
 
 import '../../../../../core/base/src/api_response.dart';
-import 'package:learn_java/features/data/models/quiz_model/quiz_model.dart';
-import 'package:learn_java/features/data/models/quiz_model/question_model.dart';
+import 'package:learn_flutter/features/data/models/quiz_model/quiz_model.dart';
+import 'package:learn_flutter/features/data/models/quiz_model/question_model.dart';
 
 class LessonRepositoryImpl implements LessonRepository {
   final LessonService lessonService;

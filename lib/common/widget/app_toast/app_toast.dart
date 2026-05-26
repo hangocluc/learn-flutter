@@ -7,7 +7,7 @@ import '../../utils/snack_bar_utils.dart';
 import '../app_icon/app_asset_image.dart';
 import '../app_overlay/overlay_widget.dart';
 import '../app_snack_bar/app_snack_bar.dart';
-import 'package:learn_java/common/theme/app_color.dart';
+import 'package:learn_flutter/common/theme/app_color.dart';
 
 enum ToastType { Success, Error, Other }
 

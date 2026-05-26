@@ -72,5 +72,8 @@ windows/runner/Release/
 windows/runner/x64/
 windows/runner/x86/
 
-# Local env overrides (do not commit secrets)
+# Environment files (do not commit secrets)
+env/.env_dev
+env/.env_prod
+env/.env_staging
 env/.env_local

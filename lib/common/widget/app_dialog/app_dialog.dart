@@ -1,9 +1,9 @@
-import 'package:learn_java/common/theme/app_color.dart';
-import 'package:learn_java/common/theme/app_effect.dart';
-import 'package:learn_java/common/theme/app_radius.dart';
-import 'package:learn_java/common/theme/app_typography.dart';
-import 'package:learn_java/common/widget/app_icon/app_asset_image.dart';
-import 'package:learn_java/main.dart';
+import 'package:learn_flutter/common/theme/app_color.dart';
+import 'package:learn_flutter/common/theme/app_effect.dart';
+import 'package:learn_flutter/common/theme/app_radius.dart';
+import 'package:learn_flutter/common/theme/app_typography.dart';
+import 'package:learn_flutter/common/widget/app_icon/app_asset_image.dart';
+import 'package:learn_flutter/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

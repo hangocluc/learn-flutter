@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:learn_java/core/extension/extention.dart';
-import 'package:learn_java/main.dart';
+import 'package:learn_flutter/core/extension/extention.dart';
+import 'package:learn_flutter/main.dart';
 
 import '../../theme/app_color.dart';
 import '../../theme/app_radius.dart';

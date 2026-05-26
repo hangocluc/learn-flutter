@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_java/features/domain/entities/src/lesson/lesson_entity.dart';
-import 'package:learn_java/features/data/models/lesson_model/progress_request_model.dart';
-import 'package:learn_java/features/data/providers/lesson_service/lesson_service.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences_key.dart';
-import 'package:learn_java/core/storage/storage_manager.dart';
+import 'package:learn_flutter/features/domain/entities/src/lesson/lesson_entity.dart';
+import 'package:learn_flutter/features/data/models/lesson_model/progress_request_model.dart';
+import 'package:learn_flutter/features/data/providers/lesson_service/lesson_service.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences_key.dart';
+import 'package:learn_flutter/core/storage/storage_manager.dart';
 import 'quiz_state.dart';
 
 class QuizCubit extends Cubit<QuizState> {

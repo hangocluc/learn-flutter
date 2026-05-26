@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
-import 'package:learn_java/core/extension/src/string_extension.dart';
+import 'package:learn_flutter/core/extension/src/string_extension.dart';
 import '../../../../main.dart';
 import '../../../generate/assets.gen.dart';
 import '../../../theme/app_color.dart';

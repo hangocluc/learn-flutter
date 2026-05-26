@@ -1,0 +1,53 @@
+@startuml seq_09_chat_comments
+!include ../_style.puml
+title Sơ đồ tuần tự — Bình luận câu hỏi (Quiz / Q&A)
+
+actor "Người dùng" as user
+boundary "QuizPage /\nTopic UI" as ui
+control "ChatCubit" as cubit
+control "ChatUsecase" as uc
+control "ChatRepository" as repo
+database "Backend API" as be
+entity "AppSharedPreferences" as prefs
+
+user -> ui : Mở phần bình luận\n(theo questionId)
+activate ui
+
+ui -> cubit : loadComments(questionId)
+activate cubit
+cubit -> cubit : emit(Loading)
+cubit -> uc : getCommentsByQuestion(questionId)
+uc -> repo : getComments()
+repo -> be : GET /api/get-comment-by-question
+be --> repo : Comment[]
+repo --> uc : List<ChatEntity>
+uc --> cubit : Either
+cubit -> cubit : emit(Loaded / Error)
+cubit --> ui : Danh sách comment
+deactivate cubit
+
+user -> ui : Like bình luận
+ui -> cubit : likeComment(commentId)
+activate cubit
+cubit -> prefs : get userId
+prefs --> cubit : userId
+
+alt Chưa đăng nhập
+  cubit -> cubit : emit(Error)
+else Có userId
+  cubit -> uc : likeComment(commentId, userId)
+  uc -> repo : updateComment()
+  repo -> be : POST /api/update-comment
+  be --> repo : comments updated
+  repo --> uc : data
+  uc --> cubit : Either Right
+  cubit -> cubit : emit(ChatStateLiked)
+end
+
+cubit --> ui : Cập nhật UI
+ui --> user : Trạng thái like mới
+
+deactivate cubit
+deactivate ui
+
+@enduml

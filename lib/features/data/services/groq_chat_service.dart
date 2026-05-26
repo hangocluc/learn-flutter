@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:learn_java/features/data/services/openai_chat_service.dart';
+import 'package:learn_flutter/features/data/services/openai_chat_service.dart';
 
 /// Groq — free tier: https://console.groq.com/keys
 class GroqChatService {

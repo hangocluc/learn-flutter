@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:learn_java/common/utils/video_link_utils.dart';
-import 'package:learn_java/features/presentation/pages/youtube_video_page/youtube_video_page.dart';
+import 'package:learn_flutter/common/utils/video_link_utils.dart';
+import 'package:learn_flutter/features/presentation/pages/youtube_video_page/youtube_video_page.dart';
 
 /// Video lesson CTA for a topic with [videoLink].
 class TopicVideoCard extends StatelessWidget {
@@ -9,10 +9,16 @@ class TopicVideoCard extends StatelessWidget {
     super.key,
     required this.videoLink,
     required this.topicTitle,
+    this.lessonId,
+    this.topicId,
+    this.lessonTitle,
   });
 
   final String videoLink;
   final String topicTitle;
+  final String? lessonId;
+  final String? topicId;
+  final String? lessonTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +38,9 @@ class TopicVideoCard extends StatelessWidget {
               builder: (context) => YoutubeVideoPage(
                 title: topicTitle,
                 videoLink: videoLink,
+                lessonId: lessonId,
+                topicId: topicId,
+                lessonTitle: lessonTitle,
               ),
             ),
           );

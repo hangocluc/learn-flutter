@@ -12,8 +12,6 @@ class QuizQuestion extends StatefulWidget {
 }
 
 class _QuizQuestionState extends State<QuizQuestion> {
-  int? indexSelect;
-
   @override
   Widget build(BuildContext context) {
     final question =
@@ -76,7 +74,6 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   margin: const EdgeInsets.only(bottom: 12),
                   child: InkWell(
                     onTap: () {
-                      indexSelect = index;
                       context.read<QuizCubit>().selectAnswer(answer);
                     },
                     borderRadius: BorderRadius.circular(12),
@@ -145,14 +142,20 @@ class _QuizQuestionState extends State<QuizQuestion> {
             width: double.infinity,
             margin: const EdgeInsets.only(top: 16, bottom: 24),
             child: ElevatedButton(
-              onPressed: selectedAnswer == null || indexSelect == null
+              onPressed: selectedAnswer == null
                   ? null
                   : () {
-                      showResultBottomSheet(context,
-                          isCorrect: (indexSelect! + 1).toString() ==
-                              question.correctAnswer, onNext: () {
-                        context.read<QuizCubit>().nextQuestion();
-                      });
+                      final cubit = context.read<QuizCubit>();
+                      showResultBottomSheet(
+                        context,
+                        isCorrect: cubit.isCorrectAnswer(
+                          question,
+                          selectedAnswer,
+                        ),
+                        onNext: () {
+                          cubit.nextQuestion();
+                        },
+                      );
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue[600],

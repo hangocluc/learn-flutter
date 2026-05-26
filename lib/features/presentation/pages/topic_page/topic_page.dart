@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:learn_java/features/presentation/pages/topic_lesson_detail_page/topic_lesson_detail_page.dart';
-import 'package:learn_java/features/presentation/widgets/topic_video_card.dart';
+import 'package:learn_flutter/features/presentation/pages/topic_lesson_detail_page/topic_lesson_detail_page.dart';
+import 'package:learn_flutter/features/presentation/widgets/topic_video_card.dart';
 import '../../../domain/entities/src/lesson/lesson_entity.dart';
 
 class TopicPage extends StatefulWidget {

@@ -8,6 +8,8 @@ import 'package:native_shared_preferences/native_shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'widget/app_toast/app_toast.dart';
+import '../features/data/firebase_service/fcm_messaging_service.dart';
+
 Future<void> commonDI(GetIt sl) async {
   final prefs = await SharedPreferences.getInstance();
   final nativePrefs = await NativeSharedPreferences.getInstance();
@@ -18,4 +20,7 @@ Future<void> commonDI(GetIt sl) async {
   );
   sl.registerLazySingleton<AppLoadingOverlay>(() => AppLoadingOverlayImpl());
   sl.registerLazySingleton(() => AppToastWidget());
+  sl.registerLazySingleton(
+    () => FcmMessagingService(preferences: sl.get()),
+  );
 }

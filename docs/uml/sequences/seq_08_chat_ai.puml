@@ -1,0 +1,46 @@
+@startuml seq_08_chat_ai
+!include ../_style.puml
+title Sơ đồ tuần tự — Tab ChatGPT (AI trợ lý học Flutter)
+
+actor "Người dùng" as user
+boundary "ChatGptPage" as ui
+control "AiChatService" as ai
+control "GroqChatService\nGeminiChatService\nOpenAiChatService" as provider
+database "Groq / Gemini /\nOpenAI API" as llm
+entity ".env\nCHAT_PROVIDER" as env
+
+user -> ui : Mở tab ChatGPT
+activate ui
+ui --> user : Tin chào mặc định\n+ chip trạng thái API key
+
+user -> ui : Nhập câu hỏi, Gửi
+ui -> ui : Thêm message user\n_sending = true
+
+ui -> ai : sendMessage(userMessage, history)
+activate ai
+ai -> env : đọc CHAT_PROVIDER\nhoặc auto chọn provider
+env --> ai : groq | gemini | openai
+
+ai -> provider : chat completion request
+activate provider
+provider -> llm : HTTPS POST (API key)
+llm --> provider : assistant text
+deactivate provider
+
+provider --> ai : reply
+deactivate ai
+
+alt Thành công
+  ai --> ui : String reply
+  ui -> ui : Thêm message assistant
+else OpenAiChatException / lỗi khác
+  ai --> ui : message lỗi
+  ui -> ui : Hiển thị lỗi trong chat
+end
+
+ui -> ui : _sending = false\nscroll to bottom
+ui --> user : Cuộn xem hội thoại
+
+deactivate ui
+
+@enduml

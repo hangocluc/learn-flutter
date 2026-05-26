@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
 
 import '../../presentation/cubits/demo_cubit/demo_cubit.dart';
 import '../../presentation/cubits/profile_cubit/profile_cubit.dart';

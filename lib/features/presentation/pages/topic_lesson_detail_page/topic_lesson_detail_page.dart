@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:learn_java/features/data/models/quiz_model/topic_model.dart';
-import 'package:learn_java/features/presentation/widgets/topic_video_card.dart';
+import 'package:learn_flutter/features/data/models/quiz_model/topic_model.dart';
+import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
+import 'package:learn_flutter/features/presentation/widgets/topic_video_card.dart';
 
 /// Full lesson content for one topic (opened from the lessons list).
 class TopicLessonDetailPage extends StatelessWidget {
@@ -9,16 +10,26 @@ class TopicLessonDetailPage extends StatelessWidget {
     required this.topic,
     required this.topicIndex,
     required this.lessonTitle,
+    this.lessonId,
   });
 
   final Topics topic;
   final int topicIndex;
   final String lessonTitle;
+  final String? lessonId;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final content = topic.content?.trim() ?? '';
+    final feedbackParams = LessonFeedbackParams(
+      lessonId: lessonId ?? topic.lessonId,
+      topicId: topic.sId,
+      lessonTitle: lessonTitle,
+      topicTitle: topic.title,
+      defaultErrorType: content.isEmpty ? 'content' : 'other',
+      errorDetail: content.isEmpty ? 'Chưa có nội dung bài học' : null,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -30,6 +41,16 @@ class TopicLessonDetailPage extends StatelessWidget {
         backgroundColor: scheme.primary,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            tooltip: 'Báo lỗi bài học',
+            onPressed: () => LessonFeedbackSheet.showLesson(
+              context,
+              params: feedbackParams,
+            ),
+            icon: const Icon(Icons.feedback_outlined),
+          ),
+        ],
       ),
       backgroundColor: scheme.surfaceContainerHighest.withOpacity(0.35),
       body: SingleChildScrollView(
@@ -41,6 +62,9 @@ class TopicLessonDetailPage extends StatelessWidget {
               TopicVideoCard(
                 videoLink: topic.videoLink!,
                 topicTitle: topic.title ?? 'Video bài học',
+                lessonId: lessonId ?? topic.lessonId,
+                topicId: topic.sId,
+                lessonTitle: lessonTitle,
               ),
               const SizedBox(height: 16),
             ],
@@ -88,14 +112,19 @@ class TopicLessonDetailPage extends StatelessWidget {
                           ),
                     ),
                     const SizedBox(height: 20),
-                    if (content.isEmpty)
+                    if (content.isEmpty) ...[
                       Text(
                         'Chưa có nội dung bài học.',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: scheme.onSurfaceVariant,
                             ),
-                      )
-                    else
+                      ),
+                      LessonFeedbackErrorBanner(
+                        params: feedbackParams,
+                        message:
+                            'Bài học này chưa có nội dung. Bạn có thể gửi phản hồi để team bổ sung.',
+                      ),
+                    ] else
                       SelectableText(
                         content,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(

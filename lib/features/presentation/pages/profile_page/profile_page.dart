@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:learn_java/main.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences_key.dart';
-import 'package:learn_java/features/presentation/pages/login_page/login_page.dart';
+import 'package:learn_flutter/main.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences_key.dart';
+import 'package:learn_flutter/features/presentation/pages/login_page/login_page.dart';
 import '../../cubits/profile_cubit/profile_cubit.dart';
 import '../../cubits/profile_cubit/profile_state.dart';
 import '../../../../common/widget/app_loading_overlay/app_loading_overlay.dart';
@@ -12,6 +12,7 @@ import '../../../../common/widget/app_toast/app_toast.dart';
 import '../../mapper/profile_mapper.dart';
 import '../../widgets/profile_chart/profile_chart_widget.dart';
 import '../../widgets/profile_stats/profile_stats_widget.dart';
+import '../../widgets/lesson_feedback_sheet.dart';
 import '../../widgets/profile_ranking/profile_ranking_widget.dart';
 import '../../../data/providers/google_signin_service.dart';
 import '../../../../core/storage/storage_manager.dart';
@@ -178,6 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     children: [
                       _buildProfileHeader(),
+                      _buildSystemFeedbackCard(context),
                       const SizedBox(height: 16),
                       ProfileStatsWidget(
                         userRank: state.userRank,
@@ -277,6 +279,32 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSystemFeedbackCard(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Colors.blue[50],
+            child: Icon(Icons.support_agent_outlined, color: Colors.blue[700]),
+          ),
+          title: const Text(
+            'System Feedback',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          subtitle: const Text(
+            'Report app bugs, suggest features, or share your experience',
+          ),
+          trailing: const Icon(Icons.chevron_right_rounded),
+          onTap: () => LessonFeedbackSheet.showSystem(context),
         ),
       ),
     );

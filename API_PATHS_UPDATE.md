@@ -27,7 +27,7 @@ final response = await dio.get('${ProfileApiPath.getProfileRank}?topUser=100');
 
 - ✅ **Centralized API paths**: Tất cả API endpoints được quản lý tập trung
 - ✅ **Easy maintenance**: Dễ dàng thay đổi API paths khi cần
-- ✅ **Consistent naming**: Theo đúng convention của project Learn Java
+- ✅ **Consistent naming**: Theo đúng convention của project Learn Flutter
 - ✅ **Type safety**: Sử dụng const để tránh lỗi typo
 
 ## 📝 API Endpoints

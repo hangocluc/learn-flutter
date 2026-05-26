@@ -1,7 +1,7 @@
-import 'package:learn_java/core/base/src/api_response.dart';
-import 'package:learn_java/features/data/providers/chat_service/chat_service.dart';
-import 'package:learn_java/features/domain/repositories/src/chat/chat_repository.dart';
-import 'package:learn_java/features/domain/entities/src/chat/chat_entity.dart';
+import 'package:learn_flutter/core/base/src/api_response.dart';
+import 'package:learn_flutter/features/data/providers/chat_service/chat_service.dart';
+import 'package:learn_flutter/features/domain/repositories/src/chat/chat_repository.dart';
+import 'package:learn_flutter/features/domain/entities/src/chat/chat_entity.dart';
 // Removed wrong/duplicate ApiResponse import
 
 class ChatRepositoryImpl implements ChatRepository {

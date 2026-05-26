@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:learn_java/features/data/services/ai_chat_service.dart';
-import 'package:learn_java/features/data/services/openai_chat_service.dart';
+import 'package:learn_flutter/features/data/services/ai_chat_service.dart';
+import 'package:learn_flutter/features/data/services/openai_chat_service.dart';
 
 class ChatGptPage extends StatefulWidget {
   const ChatGptPage({super.key});

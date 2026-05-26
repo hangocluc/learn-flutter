@@ -51,29 +51,29 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCKRSqa1yPPOYwO4sHeRtA-3n00PCIm6OI',
-    appId: '1:1016646892735:android:66a502721371d955d51a0a',
-    messagingSenderId: '1016646892735',
-    projectId: 'applearnjava',
-    storageBucket: 'applearnjava.firebasestorage.app',
+    apiKey: 'AIzaSyAdJRTN34EWL3jxr5ukmTeb-fNGIG1V710',
+    appId: '1:377464465984:android:9a6fcb5facc47dfa5b0da5',
+    messagingSenderId: '377464465984',
+    projectId: 'applea-e4729',
+    storageBucket: 'applea-e4729.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDDjR-TCTfoTCBx01PyI06AJNuZP_dlcZA',
-    appId: '1:1016646892735:ios:735665855cc19033d51a0a',
-    messagingSenderId: '1016646892735',
-    projectId: 'applearnjava',
-    storageBucket: 'applearnjava.firebasestorage.app',
-    iosBundleId: 'com.example.learnJava',
+    apiKey: 'AIzaSyCyBkRk1y3JtLAEOJHuwLJ-R36cXutKpKI',
+    appId: '1:377464465984:ios:b58f74f848bb1a955b0da5',
+    messagingSenderId: '377464465984',
+    projectId: 'applea-e4729',
+    storageBucket: 'applea-e4729.firebasestorage.app',
+    iosBundleId: 'com.example.learnFlutter',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDDjR-TCTfoTCBx01PyI06AJNuZP_dlcZA',
-    appId: '1:1016646892735:ios:735665855cc19033d51a0a',
-    messagingSenderId: '1016646892735',
-    projectId: 'applearnjava',
-    storageBucket: 'applearnjava.firebasestorage.app',
-    iosBundleId: 'com.example.learnJava',
+    apiKey: 'AIzaSyCyBkRk1y3JtLAEOJHuwLJ-R36cXutKpKI',
+    appId: '1:377464465984:ios:b58f74f848bb1a955b0da5',
+    messagingSenderId: '377464465984',
+    projectId: 'applea-e4729',
+    storageBucket: 'applea-e4729.firebasestorage.app',
+    iosBundleId: 'com.example.learnFlutter',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

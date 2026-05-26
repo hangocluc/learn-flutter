@@ -17,6 +17,7 @@ import 'features/app.dart';
 import 'features/app/app_env/env.dart';
 import 'features/app/app_env/network_env.dart';
 import 'features/app/dependencies/dependencies.dart';
+import 'features/data/firebase_service/fcm_messaging_service.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -33,6 +34,7 @@ void main() async {
   await logInitUrls();
   //setupAlice();
   await registerDependencies(getIt);
+  await getIt<FcmMessagingService>().initialize();
   configLoading();
   runApp(const MyApp());
 }

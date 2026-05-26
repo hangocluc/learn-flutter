@@ -1,4 +1,4 @@
-import 'package:learn_java/features/domain/entities/src/program/program_model.dart';
+import 'package:learn_flutter/features/domain/entities/src/program/program_model.dart';
 
 class ProgramResponse {
   String? sId;

@@ -16,45 +16,46 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
-    namespace = 'com.example.learn_java'
+    namespace = 'com.example.learn_flutter'
     compileSdk = 35
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17
     }
 
     defaultConfig {
-        applicationId = 'com.example.learn_java'
+        applicationId = 'com.example.learn_flutter'
         minSdk = 24
         targetSdk = 35
+        multiDexEnabled true
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    def keystoreFile = file("javalab.jks")
     signingConfigs {
-        release {
-            keyAlias "javalab"
-            keyPassword "123456"
-            storeFile file("javalab.jks")
-            storePassword "123456"
-        }
-        debug {
-            keyAlias "javalab"
-            keyPassword "123456"
-            storeFile file("javalab.jks")
-            storePassword "123456"
+        if (keystoreFile.exists()) {
+            release {
+                keyAlias "javalab"
+                keyPassword "123456"
+                storeFile keystoreFile
+                storePassword "123456"
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.release
+            if (keystoreFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
@@ -64,6 +65,7 @@ flutter {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
     // JavaCompileEngine dependencies
     implementation 'com.github.xiaoyvyv.JavaCompileEngine:library:1.1'
     implementation 'com.github.xiaoyvyv.JavaCompileEngine:dx:1.1'

@@ -67,7 +67,7 @@ class ${class_name}StateSuccess extends ${class_name}State {
 }" > lib/features/presentation/cubits/${feature_name}_cubit/${feature_name}_state.dart
 
 # Tạo file cơ bản trong usecases
-echo "import 'package:learn_java/core/base/base.dart';
+echo "import 'package:learn_flutter/core/base/base.dart';
 import 'package:dartz/dartz.dart';
 
 class ${class_name}Usecase extends BaseUseCase<NoParams, dynamic> {

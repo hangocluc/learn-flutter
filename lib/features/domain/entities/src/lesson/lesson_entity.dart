@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:learn_java/features/data/models/quiz_model/topic_model.dart';
+import 'package:learn_flutter/features/data/models/quiz_model/topic_model.dart';
 
 class LessonEntity extends Equatable {
   final String id;

@@ -6,7 +6,7 @@ import '../../../../../common/theme/app_spacing.dart';
 import '../../../../../common/theme/app_typography.dart';
 import '../../../../../common/widget/app_icon/app_asset_image.dart';
 import '../../../../../common/widget/app_icon/app_network_image.dart';
-import 'package:learn_java/core/extension/src/string_extension.dart';
+import 'package:learn_flutter/core/extension/src/string_extension.dart';
 
 import '../../theme/app_radius.dart';
 

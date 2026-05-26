@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 //import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
-import 'package:learn_java/firebase_options.dart';
+import 'package:learn_flutter/firebase_options.dart';
 import '../../main.dart';
 import '../theme/app_color.dart';
 import '../theme/app_radius.dart';
@@ -19,6 +19,10 @@ import '../widget/app_text/app_text.dart';
 import '../widget/app_toast/app_toast.dart';
 
 Future<void> initFirebase() async {
+  if (Firebase.apps.isNotEmpty) {
+    log('Firebase already initialized: ${Firebase.app().name}');
+    return;
+  }
   final app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

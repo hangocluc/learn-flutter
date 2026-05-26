@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:learn_java/features/domain/entities/src/lesson/lesson_entity.dart';
-import 'package:learn_java/features/domain/repositories/src/lesson/lesson_repository.dart';
+import 'package:learn_flutter/features/domain/entities/src/lesson/lesson_entity.dart';
+import 'package:learn_flutter/features/domain/repositories/src/lesson/lesson_repository.dart';
 import '../../../../core/base/src/base_usecase.dart';
 
 class LessonUseCase extends BaseUseCase<List<LessonEntity>, NoParams> {

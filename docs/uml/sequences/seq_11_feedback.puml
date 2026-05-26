@@ -1,0 +1,42 @@
+@startuml seq_11_feedback
+!include ../_style.puml
+title Sơ đồ tuần tự — Gửi phản hồi (bài học / hệ thống)
+
+actor "Người dùng" as user
+boundary "LessonFeedbackSheet" as ui
+control "FeedbackService" as svc
+database "Backend API" as be
+entity "AppSharedPreferences" as prefs
+
+user -> ui : Mở sheet "Báo lỗi"\n(từ Lesson / Profile / System)
+activate ui
+ui --> user : Form: loại lỗi, mô tả
+
+user -> ui : Gửi phản hồi
+ui -> prefs : get userId, email
+prefs --> ui : thông tin user
+
+alt Phản hồi bài học
+  ui -> svc : insertLessonFeedback(\nlessonId, topicId, errorType, detail)
+  svc -> be : POST /api/insert-lesson-feedback
+else Phản hồi app / hệ thống
+  ui -> svc : insertSystemFeedback(\ncategory, description, platform)
+  svc -> be : POST /api/insert-system-feedback
+end
+
+activate be
+be --> svc : ApiResponse success
+deactivate be
+
+alt Thành công
+  svc --> ui : OK
+  ui --> user : SnackBar "Đã gửi"
+  ui -> ui : Navigator.pop()
+else Lỗi
+  svc --> ui : Exception
+  ui --> user : Thông báo lỗi
+end
+
+deactivate ui
+
+@enduml

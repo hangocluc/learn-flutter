@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_java/core/extension/extention.dart';
+import 'package:learn_flutter/core/extension/extention.dart';
 
 import '../../../../../common/theme/app_color.dart';
 import '../../../../../common/widget/app_switch/app_switch_sync.dart';

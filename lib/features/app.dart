@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:learn_java/features/presentation/cubits/lesson_cubit/lesson_cubit.dart';
+import 'package:learn_flutter/features/presentation/cubits/lesson_cubit/lesson_cubit.dart';
 
 import '../common/l10n/generate/app_localizations.dart';
 import '../common/theme/app_theme.dart';

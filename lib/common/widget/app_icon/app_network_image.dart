@@ -1,4 +1,4 @@
-import 'package:learn_java/main.dart';
+import 'package:learn_flutter/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

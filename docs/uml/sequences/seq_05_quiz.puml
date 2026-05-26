@@ -1,0 +1,50 @@
+@startuml seq_05_quiz
+!include ../_style.puml
+title Sơ đồ tuần tự — Làm Quiz & cập nhật tiến độ
+
+actor "Người dùng" as user
+boundary "QuizPage" as ui
+control "QuizCubit" as cubit
+control "LessonService" as svc
+database "Backend API\n/api/update-process" as be
+entity "AppSharedPreferences\nStorageManager" as storage
+
+user -> ui : Mở quiz từ LessonsPage
+activate ui
+
+ui -> cubit : startQuiz(quiz)
+activate cubit
+cubit -> cubit : emit(QuizStateQuestion\nindex=0)
+cubit --> ui : Câu hỏi 1
+deactivate cubit
+
+loop Mỗi câu hỏi
+  user -> ui : Chọn đáp án
+  ui -> cubit : selectAnswer(answer)
+  cubit --> ui : cập nhật userAnswers
+
+  user -> ui : Tiếp theo / Kết thúc
+  ui -> cubit : nextQuestion()
+  alt Còn câu tiếp
+    cubit -> cubit : emit(Question, index++)
+  else Hết câu
+    cubit -> cubit : _finishQuiz()\nchấm điểm local
+    cubit -> cubit : emit(QuizStateSummary)
+  end
+end
+
+cubit -> storage : get userId
+storage --> cubit : userId
+
+cubit -> svc : updateProcess(\nuserId, lessonId, mark)
+activate svc
+svc -> be : POST /api/update-process
+be --> svc : success
+deactivate svc
+
+cubit --> ui : Hiển thị điểm / tổng kết
+ui --> user : Kết quả quiz
+
+deactivate ui
+
+@enduml

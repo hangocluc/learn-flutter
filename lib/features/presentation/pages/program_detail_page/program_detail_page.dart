@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:learn_java/features/data/entities/program_entity/program_entity.dart';
-import 'package:learn_java/features/presentation/pages/dart_playground_page/dart_playground_page.dart';
-import 'package:learn_java/features/presentation/pages/video_lesson_page/video_lesson_page.dart';
+import 'package:learn_flutter/features/data/entities/program_entity/program_entity.dart';
+import 'package:learn_flutter/features/presentation/pages/dart_playground_page/dart_playground_page.dart';
+import 'package:learn_flutter/features/presentation/pages/video_lesson_page/video_lesson_page.dart';
 
 class ProgramDetailPage extends StatelessWidget {
   final ProgramEntity program;

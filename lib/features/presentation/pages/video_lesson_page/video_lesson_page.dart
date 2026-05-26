@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
 import 'package:video_player/video_player.dart';
 
 /// Plays a lesson video from a remote URL or a bundled asset under [assets/videos/].
@@ -62,12 +63,25 @@ class _VideoLessonPageState extends State<VideoLessonPage> {
       ),
       body: _error != null
           ? Center(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
-                child: Text(
-                  _error!,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _error!,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    LessonFeedbackErrorBanner(
+                      params: LessonFeedbackParams(
+                        topicTitle: widget.title,
+                        defaultErrorType: 'video',
+                        errorDetail: _error,
+                      ),
+                      message: 'Video không phát được? Gửi phản hồi cho team.',
+                    ),
+                  ],
                 ),
               ),
             )

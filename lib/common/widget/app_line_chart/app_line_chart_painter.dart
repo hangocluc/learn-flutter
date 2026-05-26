@@ -1,4 +1,4 @@
-import 'package:learn_java/common/theme/app_color.dart';
+import 'package:learn_flutter/common/theme/app_color.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_typography.dart';
 

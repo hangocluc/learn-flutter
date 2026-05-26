@@ -1,0 +1,50 @@
+@startuml seq_12_compiler
+!include ../_style.puml
+title Sơ đồ tuần tự — Dart Playground / biên dịch code
+
+actor "Người dùng" as user
+boundary "DartPlaygroundPage" as ui
+control "CompilerCubit" as cubit
+control "CompilerService" as svc
+database "Compiler API\n(remote)" as api
+
+user -> ui : Nhập code, Run / Format
+activate ui
+
+alt Biên dịch & chạy
+  ui -> cubit : compileAndRun(code)
+  activate cubit
+  cubit -> cubit : emit(Compiling)
+  cubit -> svc : compileAndRun(javaCode)
+  svc -> api : POST execute
+  api --> svc : output / error
+  svc --> cubit : CompilerResult
+
+  alt success
+    cubit -> cubit : emit(Success output)
+  else error
+    cubit -> cubit : emit(Error)
+  end
+  cubit --> ui : BlocBuilder
+  ui --> user : Hiển thị stdout / lỗi
+  deactivate cubit
+
+else Format code
+  ui -> cubit : formatCode(code)
+  cubit -> svc : formatCode()
+  svc -> api : format endpoint
+  api --> svc : formatted source
+  cubit -> cubit : emit(Formatted)
+  cubit --> ui : Cập nhật editor
+
+else Validate syntax
+  ui -> cubit : validateSyntax(code)
+  cubit -> svc : validateSyntax()
+  svc -> api : validate
+  api --> svc : isValid / errors
+  cubit --> ui : Valid / ValidationError
+end
+
+deactivate ui
+
+@enduml

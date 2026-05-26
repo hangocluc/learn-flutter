@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_java/features/data/entities/program_entity/program_entity.dart';
-import 'package:learn_java/features/presentation/cubits/program_cubit/program_cubit.dart';
-import 'package:learn_java/features/presentation/pages/program_detail_page/program_detail_page.dart';
+import 'package:learn_flutter/features/data/entities/program_entity/program_entity.dart';
+import 'package:learn_flutter/features/presentation/cubits/program_cubit/program_cubit.dart';
+import 'package:learn_flutter/features/presentation/pages/program_detail_page/program_detail_page.dart';
 
 class ProgramListPage extends StatefulWidget {
   const ProgramListPage({super.key});

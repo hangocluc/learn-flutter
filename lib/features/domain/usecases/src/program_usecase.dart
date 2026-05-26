@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:learn_java/features/domain/entities/src/program/program_detail.dart';
-import 'package:learn_java/features/domain/entities/src/program/program_model.dart';
-import 'package:learn_java/features/domain/repositories/src/program/program_repository.dart';
+import 'package:learn_flutter/features/domain/entities/src/program/program_detail.dart';
+import 'package:learn_flutter/features/domain/entities/src/program/program_model.dart';
+import 'package:learn_flutter/features/domain/repositories/src/program/program_repository.dart';
 
 class ProgramUsecase {
   final ProgramRepository repository;

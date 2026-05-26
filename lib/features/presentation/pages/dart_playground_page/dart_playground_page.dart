@@ -3,9 +3,10 @@ import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:learn_java/features/data/services/dart_pad_service.dart';
-import 'package:learn_java/features/presentation/pages/dartpad_page/dartpad_page.dart';
-import 'package:learn_java/features/presentation/widgets/code_editor_widget.dart';
+import 'package:learn_flutter/features/data/services/dart_pad_service.dart';
+import 'package:learn_flutter/features/presentation/pages/dartpad_page/dartpad_page.dart';
+import 'package:learn_flutter/features/presentation/widgets/code_editor_widget.dart';
+import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -17,10 +18,16 @@ class DartPlaygroundPage extends StatefulWidget {
     super.key,
     required this.initialCode,
     this.title,
+    this.lessonId,
+    this.topicId,
+    this.lessonTitle,
   });
 
   final String initialCode;
   final String? title;
+  final String? lessonId;
+  final String? topicId;
+  final String? lessonTitle;
 
   static const _dartPadBlue = Color(0xFF168AFD);
   static const _tabBarBg = Color(0xFF2D2E31);
@@ -525,6 +532,33 @@ class _DartPlaygroundPageState extends State<DartPlaygroundPage>
                         icon: const Icon(Icons.code, color: Colors.white70),
                         label: const Text(
                           'Chạy trên DartPad đầy đủ',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    ),
+                  if (isError)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: TextButton.icon(
+                        onPressed: () => LessonFeedbackSheet.showLesson(
+                          context,
+                          params: LessonFeedbackParams(
+                            lessonId: widget.lessonId,
+                            topicId: widget.topicId,
+                            lessonTitle: widget.lessonTitle,
+                            topicTitle: widget.title,
+                            defaultErrorType: 'code',
+                            errorDetail: display.length > 500
+                                ? display.substring(0, 500)
+                                : display,
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.feedback_outlined,
+                          color: Colors.white70,
+                        ),
+                        label: const Text(
+                          'Báo lỗi code / bài tập',
                           style: TextStyle(color: Colors.white70),
                         ),
                       ),

@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:learn_java/features/domain/entities/src/chat/chat_entity.dart';
-import 'package:learn_java/features/domain/usecases/src/chat/chat_usecase.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences.dart';
-import 'package:learn_java/common/app_shared_preferences/app_shared_preferences_key.dart';
+import 'package:learn_flutter/features/domain/entities/src/chat/chat_entity.dart';
+import 'package:learn_flutter/features/domain/usecases/src/chat/chat_usecase.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences_key.dart';
 
 // States
 abstract class ChatState {}

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:learn_java/features/presentation/pages/quiz_page/quiz_question.dart';
-import 'package:learn_java/features/presentation/pages/quiz_page/quiz_summary.dart';
+import 'package:learn_flutter/features/presentation/pages/quiz_page/quiz_question.dart';
+import 'package:learn_flutter/features/presentation/pages/quiz_page/quiz_summary.dart';
+import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
 import '../../cubits/quiz_cubit/quiz_cubit.dart';
 import '../../cubits/quiz_cubit/quiz_state.dart';
 import '../../cubits/chat_cubit/chat_cubit.dart';
@@ -39,19 +40,31 @@ class QuizPage extends StatelessWidget {
 
             if (state is QuizStateFailure) {
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error, size: 64, color: Colors.red[300]),
-                    const SizedBox(height: 16),
-                    Text(state.message),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () =>
-                          context.read<QuizCubit>().startQuiz(quiz),
-                      child: const Text('Thử lại'),
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error, size: 64, color: Colors.red[300]),
+                      const SizedBox(height: 16),
+                      Text(state.message, textAlign: TextAlign.center),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () =>
+                            context.read<QuizCubit>().startQuiz(quiz),
+                        child: const Text('Thử lại'),
+                      ),
+                      LessonFeedbackErrorBanner(
+                        params: LessonFeedbackParams(
+                          lessonId: quiz.lessonId,
+                          topicTitle: quiz.name,
+                          defaultErrorType: 'quiz',
+                          errorDetail: state.message,
+                        ),
+                        message: 'Quiz gặp lỗi? Gửi phản hồi để team kiểm tra.',
+                      ),
+                    ],
+                  ),
                 ),
               );
             }

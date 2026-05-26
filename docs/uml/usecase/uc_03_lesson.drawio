@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net" agent="generate-drawio.py">
+  <diagram name="Page-1" id="page-1">
+    <mxGraphModel dx="1106" dy="686" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="520" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontStyle=0;fontSize=13;" value="Người dùng" vertex="1">
+          <mxGeometry height="60" width="30" x="30" y="170.5" as="geometry" />
+        </mxCell>
+        <mxCell id="3" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=13;" value="Quản lý bài học" vertex="1">
+          <mxGeometry height="55" width="145" x="140" y="173" as="geometry" />
+        </mxCell>
+        <mxCell id="4" edge="1" parent="1" style="endArrow=block;endFill=1;html=1;rounded=0;strokeWidth=1;edgeStyle=none;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="200" as="sourcePoint" />
+            <mxPoint x="140" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=13;" value="Xem danh sách bài học" vertex="1">
+          <mxGeometry height="55" width="185" x="360" y="63" as="geometry" />
+        </mxCell>
+        <mxCell id="6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=13;" value="Đọc nội dung bài học" vertex="1">
+          <mxGeometry height="55" width="175" x="360" y="173" as="geometry" />
+        </mxCell>
+        <mxCell id="7" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=13;" value="Xem video YouTube" vertex="1">
+          <mxGeometry height="55" width="160" x="360" y="283" as="geometry" />
+        </mxCell>
+        <mxCell id="8" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontStyle=0;fontSize=13;" value="Đăng nhập" vertex="1">
+          <mxGeometry height="55" width="110" x="620" y="173" as="geometry" />
+        </mxCell>
+        <mxCell id="9" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;strokeWidth=1;edgeStyle=none;verticalAlign=bottom;labelBackgroundColor=none;fontSize=11;" value="&lt;&lt;extend&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="90" as="sourcePoint" />
+            <mxPoint x="285" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;strokeWidth=1;edgeStyle=none;verticalAlign=bottom;labelBackgroundColor=none;fontSize=11;" value="&lt;&lt;extend&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="200" as="sourcePoint" />
+            <mxPoint x="285" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="11" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;strokeWidth=1;edgeStyle=none;verticalAlign=bottom;labelBackgroundColor=none;fontSize=11;" value="&lt;&lt;extend&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="310" as="sourcePoint" />
+            <mxPoint x="285" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="12" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;strokeWidth=1;edgeStyle=none;verticalAlign=bottom;labelBackgroundColor=none;fontSize=11;" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="545" y="90" as="sourcePoint" />
+            <mxPoint x="620" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="13" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;strokeWidth=1;edgeStyle=none;verticalAlign=bottom;labelBackgroundColor=none;fontSize=11;" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="535" y="200" as="sourcePoint" />
+            <mxPoint x="620" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="14" edge="1" parent="1" style="endArrow=open;endFill=0;dashed=1;html=1;rounded=0;strokeWidth=1;edgeStyle=none;verticalAlign=bottom;labelBackgroundColor=none;fontSize=11;" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="310" as="sourcePoint" />
+            <mxPoint x="620" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

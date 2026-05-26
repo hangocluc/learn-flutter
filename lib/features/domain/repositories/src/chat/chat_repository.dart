@@ -1,5 +1,5 @@
-import 'package:learn_java/features/domain/entities/src/chat/chat_entity.dart';
-import 'package:learn_java/core/base/src/api_response.dart';
+import 'package:learn_flutter/features/domain/entities/src/chat/chat_entity.dart';
+import 'package:learn_flutter/core/base/src/api_response.dart';
 
 abstract class ChatRepository {
   Future<ApiResponse<List<ChatEntity>>?> getCommentsByQuestion(

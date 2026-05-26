@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:learn_java/common/utils/video_link_utils.dart';
+import 'package:learn_flutter/common/utils/video_link_utils.dart';
+import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -11,10 +12,16 @@ class YoutubeVideoPage extends StatefulWidget {
     super.key,
     required this.title,
     required this.videoLink,
+    this.lessonId,
+    this.topicId,
+    this.lessonTitle,
   });
 
   final String title;
   final String videoLink;
+  final String? lessonId;
+  final String? topicId;
+  final String? lessonTitle;
 
   @override
   State<YoutubeVideoPage> createState() => _YoutubeVideoPageState();
@@ -122,6 +129,9 @@ class _YoutubeVideoPageState extends State<YoutubeVideoPage> {
                   : 'Không phát được trong app (lỗi 153).\n'
                       'Nhấn nút bên dưới để xem trên YouTube.',
               showOpenButton: _watchUrl != null,
+              errorDetail: _videoId == null
+                  ? 'Link: ${widget.videoLink}'
+                  : 'YouTube embed failed — videoId: $_videoId',
             )
           : Stack(
               children: [
@@ -139,9 +149,19 @@ class _YoutubeVideoPageState extends State<YoutubeVideoPage> {
     BuildContext context,
     String message, {
     bool showOpenButton = false,
+    String? errorDetail,
   }) {
+    final feedbackParams = LessonFeedbackParams(
+      lessonId: widget.lessonId,
+      topicId: widget.topicId,
+      lessonTitle: widget.lessonTitle,
+      topicTitle: widget.title,
+      defaultErrorType: 'video',
+      errorDetail: errorDetail ?? message,
+    );
+
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -168,6 +188,10 @@ class _YoutubeVideoPageState extends State<YoutubeVideoPage> {
                 label: const Text('Mở trên YouTube'),
               ),
             ],
+            LessonFeedbackErrorBanner(
+              params: feedbackParams,
+              message: 'Gặp lỗi khi xem video? Gửi phản hồi để team kiểm tra.',
+            ),
           ],
         ),
       ),

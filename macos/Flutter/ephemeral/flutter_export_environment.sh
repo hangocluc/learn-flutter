@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
 export "FLUTTER_ROOT=/Users/lucha/Documents/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/lucha/Downloads/project_flutter/learn-flutter/app-learn-java"
+export "FLUTTER_APPLICATION_PATH=/Users/lucha/Downloads/project_flutter/learn-flutter/app-learn-flutter"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
