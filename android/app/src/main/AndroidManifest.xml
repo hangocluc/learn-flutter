@@ -12,7 +12,8 @@
     <application
         android:label="Learn Flutter"
         android:name=".LearnFlutterApplication"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:largeHeap="true">
 
         <!-- Google Sign-In meta-data -->
         <meta-data
@@ -68,8 +69,17 @@
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="http"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="vnd.youtube"/>
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="youtube"/>
+        </intent>
+        <package android:name="com.google.android.youtube"/>
     </queries>
 
 </manifest>

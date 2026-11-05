@@ -4,4 +4,5 @@ class AppSharedPreferencesKey {
   static const String theme = 'THEME';
   static const String userId = 'USER_ID';
   static const String fcmToken = 'FCM_TOKEN';
+  static const String exploredProgramDetailIds = 'EXPLORED_PROGRAM_DETAIL_IDS';
 }

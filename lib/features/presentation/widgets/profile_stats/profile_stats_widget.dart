@@ -38,7 +38,7 @@ class ProfileStatsWidget extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: _buildStatCard(
-              'Tests',
+              'Quizzes',
               testCount.toString(),
               Icons.quiz,
               Colors.purple,

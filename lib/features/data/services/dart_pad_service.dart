@@ -27,24 +27,166 @@ class DartPadService {
   }
 
   Future<DartPadCompileResult> compile(String source) async {
-    final response = await _dio.post<Map<String, dynamic>>(
-      'compileNewDDC',
-      data: {'source': source},
-    );
-    final data = response.data;
-    if (data == null) {
-      throw Exception('DartPad compile: empty response');
+    final prepared = prepareDartPadSource(source);
+
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        'compileNewDDC',
+        data: {'source': prepared},
+      );
+      final data = response.data;
+      if (data == null) {
+        throw Exception('DartPad compile: empty response');
+      }
+      final error = data['error'] as String?;
+      if (error != null && error.isNotEmpty) {
+        return DartPadCompileResult.failure(error);
+      }
+      final result = data['result'] as String?;
+      if (result == null || result.isEmpty) {
+        return DartPadCompileResult.failure('Compilation returned no output.');
+      }
+      return DartPadCompileResult.success(result);
+    } on DioException catch (e) {
+      final body = e.response?.data;
+      if (body is String && body.trim().isNotEmpty) {
+        return DartPadCompileResult.failure(body.trim());
+      }
+      if (body is Map) {
+        final error = body['error']?.toString();
+        if (error != null && error.isNotEmpty) {
+          return DartPadCompileResult.failure(error);
+        }
+      }
+      return DartPadCompileResult.failure(
+        'Không biên dịch được code. Kiểm tra cú pháp hoặc thử lại sau.',
+      );
     }
-    final error = data['error'] as String?;
-    if (error != null && error.isNotEmpty) {
-      return DartPadCompileResult.failure(error);
-    }
-    final result = data['result'] as String?;
-    if (result == null || result.isEmpty) {
-      return DartPadCompileResult.failure('Compilation returned no output.');
-    }
-    return DartPadCompileResult.success(result);
   }
+
+  Future<DartPadFormatResult> format(String source) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        'format',
+        data: {'source': source},
+      );
+      final data = response.data;
+      if (data == null) {
+        return DartPadFormatResult.failure('Format: empty response');
+      }
+      final formatted = data['source'] as String?;
+      if (formatted == null || formatted.isEmpty) {
+        return DartPadFormatResult.failure('Format returned no output.');
+      }
+      return DartPadFormatResult.success(formatted);
+    } on DioException catch (e) {
+      final body = e.response?.data;
+      if (body is String && body.trim().isNotEmpty) {
+        return DartPadFormatResult.failure(body.trim());
+      }
+      if (body is Map) {
+        final error = body['error']?.toString();
+        if (error != null && error.isNotEmpty) {
+          return DartPadFormatResult.failure(error);
+        }
+      }
+      return DartPadFormatResult.failure('Không format được code.');
+    }
+  }
+}
+
+/// Ensures Flutter snippets from lessons can compile on DartPad.
+String prepareDartPadSource(String source) {
+  final trimmed = source.trim();
+  if (trimmed.isEmpty) {
+    return trimmed;
+  }
+
+  if (RegExp(r'\bvoid\s+main\s*\(').hasMatch(trimmed)) {
+    return trimmed;
+  }
+
+  if (!trimmed.contains('package:flutter')) {
+    return trimmed;
+  }
+
+  final allWidgets = _findAllWidgetClasses(trimmed);
+  if (allWidgets.isEmpty) {
+    return trimmed;
+  }
+
+  // Find the root widget: one that is NOT instantiated inside other widget classes.
+  final rootWidget = _findRootWidget(trimmed, allWidgets);
+
+  // If the code already has a MaterialApp (e.g. MyApp wraps MaterialApp),
+  // just call runApp directly on the root widget.
+  if (trimmed.contains('MaterialApp')) {
+    return '''
+$trimmed
+
+void main() {
+  runApp($rootWidget());
+}
+''';
+  }
+
+  return '''
+$trimmed
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: $rootWidget(),
+        ),
+      ),
+    ),
+  );
+}
+''';
+}
+
+List<String> _findAllWidgetClasses(String source) {
+  final pattern = RegExp(
+    r'class\s+(\w+)\s+extends\s+(?:StatelessWidget|StatefulWidget)',
+    multiLine: true,
+  );
+  return [
+    for (final match in pattern.allMatches(source))
+      if (match.group(1) != null) match.group(1)!,
+  ];
+}
+
+/// Returns the widget class that is NOT instantiated inside any other widget
+/// class body — that widget is the entry-point / root.
+String _findRootWidget(String source, List<String> widgetNames) {
+  if (widgetNames.length == 1) return widgetNames.first;
+
+  for (final candidate in widgetNames) {
+    final usedByOther = widgetNames.any(
+      (other) => other != candidate && _isUsedInside(source, other, candidate),
+    );
+    if (!usedByOther) return candidate;
+  }
+
+  return widgetNames.first;
+}
+
+/// Returns true when [targetName] is instantiated (`targetName(`) inside the
+/// body of class [containerClass].
+bool _isUsedInside(String source, String containerClass, String targetName) {
+  final classStart =
+      RegExp('class\\s+$containerClass\\b').firstMatch(source)?.start;
+  if (classStart == null) return false;
+
+  final nextClassMatch =
+      RegExp(r'\nclass\s+\w+\s+extends').firstMatch(source.substring(classStart + 1));
+  final end = nextClassMatch == null
+      ? source.length
+      : classStart + 1 + nextClassMatch.start;
+
+  return source.substring(classStart, end).contains('$targetName(');
 }
 
 class DartPadVersion {
@@ -69,6 +211,21 @@ class DartPadCompileResult {
   final String? error;
 
   bool get isSuccess => javaScript != null;
+}
+
+class DartPadFormatResult {
+  const DartPadFormatResult._({this.formattedSource, this.error});
+
+  factory DartPadFormatResult.success(String formattedSource) =>
+      DartPadFormatResult._(formattedSource: formattedSource);
+
+  factory DartPadFormatResult.failure(String error) =>
+      DartPadFormatResult._(error: error);
+
+  final String? formattedSource;
+  final String? error;
+
+  bool get isSuccess => formattedSource != null;
 }
 
 /// Wraps compiled JS for execution (matches dart-lang/dart-pad frame.dart).

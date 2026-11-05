@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:learn_flutter/features/presentation/widgets/app_loading_widget.dart';
 import 'package:learn_flutter/features/presentation/pages/quiz_page/quiz_question.dart';
 import 'package:learn_flutter/features/presentation/pages/quiz_page/quiz_summary.dart';
 import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
@@ -29,13 +30,11 @@ class QuizPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(quiz.name),
-          backgroundColor: Colors.blue[600],
-          foregroundColor: Colors.white,
         ),
         body: BlocBuilder<QuizCubit, QuizState>(
           builder: (context, state) {
             if (state is QuizStateLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const AppLoadingWidget.fullScreen();
             }
 
             if (state is QuizStateFailure) {

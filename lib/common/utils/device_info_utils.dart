@@ -56,4 +56,24 @@ class DeviceInfoUtils {
     }
     return 'Unknown';
   }
+
+  Future<AndroidDeviceInfo> _androidDeviceInfo() async {
+    if (_androidInfo != null) return _androidInfo!;
+    _androidInfo = await DeviceInfoPlugin().androidInfo;
+    return _androidInfo!;
+  }
+
+  /// Android emulator (goldfish / generic / sdk_gphone, …).
+  Future<bool> isAndroidEmulator() async {
+    if (!Platform.isAndroid) return false;
+    final info = await _androidDeviceInfo();
+    return !info.isPhysicalDevice;
+  }
+
+  /// Flutter Web preview (CanvasKit in WebView) often OOMs on emulator / low-RAM devices.
+  Future<bool> isFlutterWebPreviewRisky() async {
+    if (!Platform.isAndroid) return false;
+    final info = await _androidDeviceInfo();
+    return !info.isPhysicalDevice || info.isLowRamDevice;
+  }
 }

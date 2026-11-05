@@ -47,11 +47,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       minTextAdapt: true,
       splitScreenMode: true,
       designSize: const Size(375, 812),
-      child: GestureDetector(
-        onTap: () {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        child: MultiBlocProvider(
+      child: MultiBlocProvider(
           providers: _appBlocProviders(),
           child: BlocBuilder<DemoCubit, DemoState>(
             builder: (context, state) {
@@ -59,12 +55,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 builder: (context, child) {
                   child = EasyLoading.init()(context, child);
                   child = OverlayWidget.init()(context, child);
-                  child =
-                      child; // Force non-null since we know child will be provided
                   return MediaQuery(
                     data: MediaQuery.of(context)
                         .copyWith(textScaler: TextScaler.noScaling),
-                    child: child,
+                    child: GestureDetector(
+                      onTap: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      behavior: HitTestBehavior.translucent,
+                      child: child,
+                    ),
                   );
                 },
                 debugShowCheckedModeBanner: false,
@@ -86,7 +86,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             },
           ),
         ),
-      ),
     );
   }
 }

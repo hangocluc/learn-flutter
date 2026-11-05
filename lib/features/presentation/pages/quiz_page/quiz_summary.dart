@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:learn_flutter/core/navigator/main_tab_navigator.dart';
+import 'package:learn_flutter/main.dart';
+import '../../cubits/quiz_cubit/quiz_cubit.dart';
 import '../../cubits/quiz_cubit/quiz_state.dart';
 
 class QuizSummary extends StatelessWidget {
   const QuizSummary({super.key, required this.state, required this.isFromQuiz});
   final QuizStateSummary state;
   final bool isFromQuiz;
+
+  void _returnToHome(BuildContext context) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    getIt<MainTabNavigator>().goHome();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +74,8 @@ class QuizSummary extends StatelessWidget {
               if (!isFromQuiz) ...[
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () =>
+                        context.read<QuizCubit>().startQuiz(state.quiz),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],
                       foregroundColor: Colors.white,
@@ -77,17 +87,11 @@ class QuizSummary extends StatelessWidget {
                     child: const Text('Học lại'),
                   ),
                 ),
-                SizedBox(
-                  width: 16,
-                ),
+                const SizedBox(width: 16),
               ],
               Expanded(
                 child: ElevatedButton(
-                  onPressed: isFromQuiz
-                      ? () => Navigator.of(context).pop()
-                      : () => Navigator.of(context)
-                        ..pop()
-                        ..pop(),
+                  onPressed: () => _returnToHome(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[600],
                     foregroundColor: Colors.white,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn_flutter/features/presentation/widgets/app_loading_widget.dart';
 import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
 import 'package:video_player/video_player.dart';
 
@@ -86,7 +87,7 @@ class _VideoLessonPageState extends State<VideoLessonPage> {
               ),
             )
           : !_ready
-              ? const Center(child: CircularProgressIndicator())
+              ? const AppLoadingWidget.fullScreen()
               : AnimatedBuilder(
                   animation: _controller,
                   builder: (context, child) {

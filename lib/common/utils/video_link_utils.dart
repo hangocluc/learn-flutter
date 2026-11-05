@@ -1,3 +1,5 @@
+import 'package:url_launcher/url_launcher.dart';
+
 /// Helpers for [videoLink] fields (YouTube watch URLs, youtu.be, embed links).
 class VideoLinkUtils {
   VideoLinkUtils._();
@@ -36,6 +38,60 @@ class VideoLinkUtils {
     final id = youtubeVideoId(raw);
     if (id == null) return '';
     return 'https://www.youtube.com/watch?v=$id';
+  }
+
+  static String youtubeShortUrl(String? raw) {
+    final id = youtubeVideoId(raw);
+    if (id == null) return '';
+    return 'https://youtu.be/$id';
+  }
+
+  /// Opens YouTube via app deep link first, then external browser.
+  static Future<bool> launchYoutubeVideo(String? raw) async {
+    final id = youtubeVideoId(raw);
+    final candidates = <({Uri uri, LaunchMode mode})>[];
+
+    if (id != null) {
+      candidates.addAll([
+        (
+          uri: Uri.parse('vnd.youtube:$id'),
+          mode: LaunchMode.externalNonBrowserApplication,
+        ),
+        (
+          uri: Uri.parse('youtube://www.youtube.com/watch?v=$id'),
+          mode: LaunchMode.externalNonBrowserApplication,
+        ),
+        (
+          uri: Uri.parse('https://youtu.be/$id'),
+          mode: LaunchMode.externalApplication,
+        ),
+        (
+          uri: Uri.parse('https://www.youtube.com/watch?v=$id'),
+          mode: LaunchMode.externalApplication,
+        ),
+      ]);
+    }
+
+    final trimmed = raw?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) {
+      final parsed = Uri.tryParse(trimmed);
+      if (parsed != null &&
+          parsed.hasScheme &&
+          !candidates.any((c) => c.uri.toString() == parsed.toString())) {
+        candidates.add((uri: parsed, mode: LaunchMode.externalApplication));
+      }
+    }
+
+    for (final candidate in candidates) {
+      try {
+        if (await launchUrl(candidate.uri, mode: candidate.mode)) {
+          return true;
+        }
+      } catch (_) {
+        continue;
+      }
+    }
+    return false;
   }
 
   static String youtubeThumbnailUrl(String? raw) {

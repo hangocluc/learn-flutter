@@ -12,12 +12,14 @@ class ProfileStateSuccess extends ProfileState {
   final List<RankUserEntity> rankUsers;
   final int userRank;
   final double userScore;
+  final int completedQuizzes;
 
   ProfileStateSuccess({
     required this.profileScores,
     required this.rankUsers,
     required this.userRank,
     required this.userScore,
+    required this.completedQuizzes,
   });
 }
 

@@ -8,6 +8,7 @@ import 'package:learn_flutter/features/presentation/pages/login_page/login_page.
 import '../../cubits/profile_cubit/profile_cubit.dart';
 import '../../cubits/profile_cubit/profile_state.dart';
 import '../../../../common/widget/app_loading_overlay/app_loading_overlay.dart';
+import '../../widgets/app_loading_widget.dart';
 import '../../../../common/widget/app_toast/app_toast.dart';
 import '../../mapper/profile_mapper.dart';
 import '../../widgets/profile_chart/profile_chart_widget.dart';
@@ -39,12 +40,19 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  Future<String?> _resolveUserId() async {
+    final prefs = getIt<AppSharedPreferences>();
+    final fromPrefs = prefs.getString(AppSharedPreferencesKey.userId);
+    if (fromPrefs != null && fromPrefs.isNotEmpty) {
+      return fromPrefs;
+    }
+    return StorageManager.getUserId();
+  }
+
   Future<void> _loadProfileData() async {
-    final storedUserId = await StorageManager.getUserId();
-    debugPrint('StorageManager.getUserId (init) -> $storedUserId');
-    final String userId = storedUserId ?? "619e1c95b4dcb2278ffc7222";
-    debugPrint('ProfilePage using userId (init) -> $userId');
-    if (!mounted) return;
+    final userId = await _resolveUserId();
+    debugPrint('ProfilePage userId -> $userId');
+    if (userId == null || userId.isEmpty || !mounted) return;
     cubit.loadProfileData(userId);
   }
 
@@ -63,18 +71,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.blue[600],
-        elevation: 0,
+        title: const Text('Profile'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.logout),
             tooltip: 'Logout',
             onPressed: () async {
               try {
@@ -102,13 +102,9 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: () async {
-              final storedUserId = await StorageManager.getUserId();
-              debugPrint(
-                  'StorageManager.getUserId (appBar refresh) -> $storedUserId');
-              final String userId = storedUserId ?? "619e1c95b4dcb2278ffc7222";
-              debugPrint(
-                  'ProfilePage using userId (appBar refresh) -> $userId');
-              if (!mounted) return;
+              final userId = await _resolveUserId();
+              debugPrint('ProfilePage userId (refresh) -> $userId');
+              if (userId == null || userId.isEmpty || !mounted) return;
               cubit.refreshData(userId);
             },
           ),
@@ -119,9 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             if (state is ProfileStateLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const AppLoadingWidget.fullScreen();
             }
 
             if (state is ProfileStateFailure) {
@@ -165,13 +159,9 @@ class _ProfilePageState extends State<ProfilePage> {
             if (state is ProfileStateSuccess) {
               return RefreshIndicator(
                 onRefresh: () async {
-                  final storedUserId = await StorageManager.getUserId();
-                  debugPrint(
-                      'StorageManager.getUserId (pull-to-refresh) -> $storedUserId');
-                  final String userId =
-                      storedUserId ?? "619e1c95b4dcb2278ffc7222";
-                  debugPrint(
-                      'ProfilePage using userId (pull-to-refresh) -> $userId');
+                  final userId = await _resolveUserId();
+                  debugPrint('ProfilePage userId (pull-to-refresh) -> $userId');
+                  if (userId == null || userId.isEmpty) return;
                   await context.read<ProfileCubit>().refreshData(userId);
                 },
                 child: SingleChildScrollView(
@@ -184,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ProfileStatsWidget(
                         userRank: state.userRank,
                         userScore: state.userScore,
-                        testCount: state.profileScores.length,
+                        testCount: state.completedQuizzes,
                       ),
                       const SizedBox(height: 16),
                       _buildChartSection(state),
@@ -251,8 +241,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
+                  placeholder: (context, url) => const AppLoadingWidget.small(),
                   errorWidget: (context, url, error) => const Icon(
                     Icons.person,
                     size: 50,

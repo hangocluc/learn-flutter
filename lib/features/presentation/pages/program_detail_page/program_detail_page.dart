@@ -16,8 +16,6 @@ class ProgramDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(program.name ?? 'Program Details'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
       ),
       body: program.programDetails?.isEmpty == true
           ? const Center(

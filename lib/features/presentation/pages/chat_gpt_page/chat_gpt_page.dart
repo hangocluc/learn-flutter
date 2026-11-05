@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:learn_flutter/features/data/services/ai_chat_service.dart';
 import 'package:learn_flutter/features/data/services/openai_chat_service.dart';
+import 'package:learn_flutter/features/presentation/widgets/app_loading_widget.dart';
 
 class ChatGptPage extends StatefulWidget {
   const ChatGptPage({super.key});
@@ -175,11 +176,7 @@ class _ChatGptPageState extends State<ChatGptPage> {
                 IconButton.filled(
                   onPressed: _sending ? null : _send,
                   icon: _sending
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                      ? const AppLoadingWidget.small()
                       : const Icon(Icons.send_rounded),
                 ),
               ],

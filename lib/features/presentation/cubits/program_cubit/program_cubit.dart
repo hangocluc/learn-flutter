@@ -9,7 +9,8 @@ class ProgramCubit extends Cubit<ProgramCubitState> {
 
   ProgramCubit({required this.programUsecase}) : super(ProgramCubitInitial());
 
-  Future<void> loadPrograms() async {
+  Future<void> loadPrograms({bool forceRefresh = false}) async {
+    if (!forceRefresh && state is ProgramCubitLoaded) return;
     emit(ProgramCubitLoading());
 
     try {
@@ -27,6 +28,6 @@ class ProgramCubit extends Cubit<ProgramCubitState> {
   }
 
   void refreshData() {
-    loadPrograms();
+    loadPrograms(forceRefresh: true);
   }
 }

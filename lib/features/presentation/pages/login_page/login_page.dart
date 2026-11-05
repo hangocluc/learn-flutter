@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:learn_flutter/features/presentation/widgets/app_loading_widget.dart';
 import 'package:learn_flutter/main.dart';
 import '../../../../core/storage/storage_manager.dart';
 import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
@@ -189,18 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(28),
                         onTap: _isLoading ? null : _handleGoogleSignIn,
                         child: _isLoading
-                            ? const Center(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFF667eea),
-                                    ),
-                                  ),
-                                ),
-                              )
+                            ? const Center(child: AppLoadingWidget.small())
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [

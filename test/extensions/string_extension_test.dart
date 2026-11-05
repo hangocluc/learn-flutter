@@ -89,7 +89,7 @@ void main() {
     test('valid 6-char hex returns Color', () {
       final color = 'FF0000'.fromHex;
       expect(color, isNotNull);
-      expect(color!.r, closeTo(1.0, 0.01));
+      expect(color!.red, 255);
     });
 
     test('hex with # prefix returns Color', () {

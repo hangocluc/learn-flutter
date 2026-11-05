@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
 import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences_key.dart';
-import 'package:learn_flutter/features/data/models/lesson_model/progress_request_model.dart';
+import 'package:learn_flutter/features/presentation/widgets/app_loading_widget.dart';
 import 'package:learn_flutter/features/data/models/quiz_model/topic_model.dart';
 import 'package:learn_flutter/features/data/providers/lesson_service/lesson_service.dart';
 import 'package:learn_flutter/features/domain/entities/src/lesson/lesson_entity.dart';
 import 'package:learn_flutter/features/presentation/pages/topic_lesson_detail_page/topic_lesson_detail_page.dart';
 import 'package:learn_flutter/features/presentation/pages/youtube_video_page/youtube_video_page.dart';
 import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
+import 'package:learn_flutter/common/utils/lesson_progress_utils.dart';
 import 'package:learn_flutter/main.dart';
 import '../../cubits/lesson_cubit/lesson_cubit.dart';
 import '../../cubits/lesson_cubit/lesson_state.dart';
+import '../../cubits/profile_cubit/profile_cubit.dart';
 import '../quiz_page/quiz_page.dart';
 
 class LessonsPage extends StatefulWidget {
@@ -41,7 +43,7 @@ class _LessonsPageState extends State<LessonsPage> {
     }
     return RefreshIndicator(
       onRefresh: () async {
-        await context.read<LessonCubit>().loadLessons();
+        await context.read<LessonCubit>().loadLessons(forceRefresh: true);
       },
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -196,7 +198,15 @@ class _LessonsPageState extends State<LessonsPage> {
     Topics topic,
     int topicIndex,
   ) {
-    _markLessonStarted(lesson.id);
+    // Note: we intentionally do NOT call `_markLessonStarted` here. The topic
+    // detail page records completion (`status = 1`); sending a concurrent
+    // `status = 0` "started" update for the same lesson can race with—and
+    // overwrite—that completion on the backend, leaving progress stuck at 0.
+    //
+    // We also do NOT refresh the lessons list on return: the list doesn't show
+    // completion state, so reloading it just flashes a spinner and collapses
+    // the expanded chapters. The Home "Your Progress" card already refreshes
+    // when the user switches back to the Home tab.
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (context) => TopicLessonDetailPage(
@@ -236,26 +246,24 @@ class _LessonsPageState extends State<LessonsPage> {
         ),
       ),
     )
-        .then((_) {
+        .then((_) async {
       if (mounted) {
         context.read<LessonCubit>().loadLessons();
+        final userId =
+            _sharedPreferences.getString(AppSharedPreferencesKey.userId);
+        if (userId != null && userId.isNotEmpty) {
+          await getIt.get<ProfileCubit>().refreshData(userId);
+        }
       }
     });
   }
 
   Future<void> _markLessonStarted(String lessonId) async {
-    try {
-      final String? userId =
-          _sharedPreferences.get(AppSharedPreferencesKey.userId) as String?;
-      if (userId == null || userId.isEmpty) return;
-      final request = ProgressRequestModel(
-        userId: userId,
-        lessonId: lessonId,
-        status: 0,
-        quizStatus: 0,
-      );
-      await _lessonService.updateProcess(request);
-    } catch (_) {}
+    await LessonProgressUtils.markLessonStarted(
+      lessonService: _lessonService,
+      sharedPreferences: _sharedPreferences,
+      lessonId: lessonId,
+    );
   }
 
   @override
@@ -267,7 +275,7 @@ class _LessonsPageState extends State<LessonsPage> {
       body: BlocBuilder<LessonCubit, LessonState>(
         builder: (context, state) {
           if (state is LessonStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingWidget.fullScreen();
           }
           if (state is LessonStateFailure) {
             return Center(

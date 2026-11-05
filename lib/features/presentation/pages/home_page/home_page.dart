@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubits/home_cubit/home_cubit.dart';
 import '../../cubits/home_cubit/home_state.dart';
+import '../../widgets/app_loading_widget.dart';
 
 class HomePage extends StatelessWidget {
   final Function(int)? onNavigateToTab;
@@ -14,8 +15,8 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
-            if (state is HomeStateLoading) {
-              return const Center(child: CircularProgressIndicator());
+            if (state is HomeStateInitial || state is HomeStateLoading) {
+              return const AppLoadingWidget.fullScreen();
             }
 
             if (state is HomeStateFailure) {
@@ -50,7 +51,12 @@ class HomePage extends StatelessWidget {
                   ),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                    sliver: SliverToBoxAdapter(child: _RecentActivity(state: state)),
+                    sliver: SliverToBoxAdapter(
+                      child: _RecentActivity(
+                        onNavigateToTab: onNavigateToTab,
+                        state: state,
+                      ),
+                    ),
                   ),
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
@@ -507,14 +513,20 @@ class _ActionTile extends StatelessWidget {
 }
 
 class _RecentActivity extends StatelessWidget {
-  const _RecentActivity({required this.state});
+  const _RecentActivity({
+    required this.onNavigateToTab,
+    required this.state,
+  });
 
+  final Function(int)? onNavigateToTab;
   final HomeState state;
 
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> activities = [];
     final s = state;
+    final hasRealActivity =
+        s is HomeStateSuccess && s.recentActivities.isNotEmpty;
     if (s is HomeStateSuccess) {
       activities = s.recentActivities;
     }
@@ -557,6 +569,9 @@ class _RecentActivity extends StatelessWidget {
                   time: activities[i]['time'] as String,
                   icon: activities[i]['icon'] as IconData,
                   tint: activities[i]['color'] as Color,
+                  onTap: hasRealActivity
+                      ? () => onNavigateToTab?.call(3)
+                      : () => onNavigateToTab?.call(1),
                 ),
                 if (i < activities.length - 1) const Divider(height: 18),
               ]
@@ -574,53 +589,62 @@ class _ActivityRow extends StatelessWidget {
     required this.time,
     required this.icon,
     required this.tint,
+    this.onTap,
   });
 
   final String title;
   final String time;
   final IconData icon;
   final Color tint;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: tint.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Icon(icon, color: tint, size: 20),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: tint.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(14),
               ),
-              const SizedBox(height: 2),
-              Text(
-                time,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+              child: Icon(icon, color: tint, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    time,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ],
         ),
-        Icon(
-          Icons.chevron_right_rounded,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-      ],
+      ),
     );
   }
 }

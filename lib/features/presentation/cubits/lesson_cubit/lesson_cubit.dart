@@ -8,7 +8,8 @@ class LessonCubit extends Cubit<LessonState> {
   final LessonUseCase useCase;
   LessonCubit({required this.useCase}) : super(LessonStateInitial());
 
-  Future<void> loadLessons() async {
+  Future<void> loadLessons({bool forceRefresh = false}) async {
+    if (!forceRefresh && state is LessonStateSuccess) return;
     emit(LessonStateLoading());
     final result = await useCase.call(NoParams());
     result.fold(

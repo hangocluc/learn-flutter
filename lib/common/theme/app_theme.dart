@@ -48,14 +48,14 @@ class AppTheme {
     splashFactory: InkSparkle.splashFactory,
     appBarTheme: AppBarTheme(
       centerTitle: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.blue,
       elevation: 0,
       scrolledUnderElevation: 0,
-      foregroundColor: AppColors.theBlack.theBlack900,
+      foregroundColor: Colors.white,
       titleTextStyle: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeight.w800,
-        color: AppColors.theBlack.theBlack900,
+        color: Colors.white,
       ),
     ),
     cardTheme: CardTheme(
@@ -177,14 +177,14 @@ class AppTheme {
     splashFactory: InkSparkle.splashFactory,
     appBarTheme: AppBarTheme(
       centerTitle: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.blue,
       elevation: 0,
       scrolledUnderElevation: 0,
-      foregroundColor: AppColors.white.white,
+      foregroundColor: Colors.white,
       titleTextStyle: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeight.w800,
-        color: AppColors.white.white,
+        color: Colors.white,
       ),
     ),
     cardTheme: CardTheme(

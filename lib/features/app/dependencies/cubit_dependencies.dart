@@ -19,7 +19,10 @@ Future<void> registerCubitDI(GetIt sl) async {
   );
 
   sl.registerLazySingleton(
-    () => ProfileCubit(usecase: sl.get<profile_uc.ProfileUsecase>()),
+    () => ProfileCubit(
+      usecase: sl.get<profile_uc.ProfileUsecase>(),
+      lessonService: sl.get<LessonService>(),
+    ),
   );
 
   sl.registerFactory<LessonCubit>(
@@ -47,7 +50,7 @@ Future<void> registerCubitDI(GetIt sl) async {
   sl.registerFactory<HomeCubit>(
     () => HomeCubit(
       profileUsecase: sl.get<profile_uc.ProfileUsecase>(),
-      lessonUsecase: sl.get<LessonUseCase>(),
+      lessonService: sl.get<LessonService>(),
       programUsecase: sl.get<ProgramUsecase>(),
       sharedPreferences: sl.get<AppSharedPreferences>(),
     ),

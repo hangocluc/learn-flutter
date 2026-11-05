@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:learn_flutter/common/app_shared_preferences/app_shared_preferences.dart';
+import 'package:learn_flutter/common/utils/lesson_progress_utils.dart';
 import 'package:learn_flutter/features/data/models/quiz_model/topic_model.dart';
+import 'package:learn_flutter/features/data/providers/lesson_service/lesson_service.dart';
 import 'package:learn_flutter/features/presentation/widgets/lesson_feedback_sheet.dart';
 import 'package:learn_flutter/features/presentation/widgets/topic_video_card.dart';
+import 'package:learn_flutter/main.dart';
 
 /// Full lesson content for one topic (opened from the lessons list).
-class TopicLessonDetailPage extends StatelessWidget {
+class TopicLessonDetailPage extends StatefulWidget {
   const TopicLessonDetailPage({
     super.key,
     required this.topic,
@@ -19,14 +23,99 @@ class TopicLessonDetailPage extends StatelessWidget {
   final String? lessonId;
 
   @override
+  State<TopicLessonDetailPage> createState() => _TopicLessonDetailPageState();
+}
+
+class _TopicLessonDetailPageState extends State<TopicLessonDetailPage> {
+  static const _scrollBottomThreshold = 48.0;
+
+  late final ScrollController _scrollController;
+  bool _completionRecorded = false;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkScrollCompletion();
+      // Re-check after layout settles (e.g. video card / images change the
+      // scroll extent) so short topics that fit on screen still get recorded.
+      Future<void>.delayed(const Duration(milliseconds: 400), () {
+        if (mounted) _checkScrollCompletion();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() => _checkScrollCompletion();
+
+  void _checkScrollCompletion() {
+    if (_completionRecorded || _isSaving || !_scrollController.hasClients) {
+      return;
+    }
+
+    final content = widget.topic.content?.trim() ?? '';
+    if (content.isEmpty) return;
+
+    final position = _scrollController.position;
+    final reachedBottom = position.maxScrollExtent <= _scrollBottomThreshold ||
+        position.pixels >= position.maxScrollExtent - _scrollBottomThreshold;
+
+    if (reachedBottom) {
+      _markTopicCompleted();
+    }
+  }
+
+  Future<void> _markTopicCompleted() async {
+    final topicId = widget.topic.sId;
+    final lessonId = widget.lessonId ?? widget.topic.lessonId;
+    if (topicId == null ||
+        topicId.isEmpty ||
+        lessonId == null ||
+        lessonId.isEmpty) {
+      return;
+    }
+
+    _isSaving = true;
+    final saved = await LessonProgressUtils.markTopicCompleted(
+      lessonService: getIt.get<LessonService>(),
+      sharedPreferences: getIt.get<AppSharedPreferences>(),
+      lessonId: lessonId,
+      topicId: topicId,
+    );
+    _isSaving = false;
+
+    if (saved) {
+      _completionRecorded = true;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Đã hoàn thành bài học ✓'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+    // On failure `_completionRecorded` stays false, so a later scroll/re-check
+    // will retry saving the progress.
+  }
+
+  @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final content = topic.content?.trim() ?? '';
+    final content = widget.topic.content?.trim() ?? '';
     final feedbackParams = LessonFeedbackParams(
-      lessonId: lessonId ?? topic.lessonId,
-      topicId: topic.sId,
-      lessonTitle: lessonTitle,
-      topicTitle: topic.title,
+      lessonId: widget.lessonId ?? widget.topic.lessonId,
+      topicId: widget.topic.sId,
+      lessonTitle: widget.lessonTitle,
+      topicTitle: widget.topic.title,
       defaultErrorType: content.isEmpty ? 'content' : 'other',
       errorDetail: content.isEmpty ? 'Chưa có nội dung bài học' : null,
     );
@@ -34,7 +123,7 @@ class TopicLessonDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          topic.title ?? 'Chi tiết bài học',
+          widget.topic.title ?? 'Chi tiết bài học',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -54,17 +143,18 @@ class TopicLessonDetailPage extends StatelessWidget {
       ),
       backgroundColor: scheme.surfaceContainerHighest.withOpacity(0.35),
       body: SingleChildScrollView(
+        controller: _scrollController,
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (topic.hasVideo) ...[
+            if (widget.topic.hasVideo) ...[
               TopicVideoCard(
-                videoLink: topic.videoLink!,
-                topicTitle: topic.title ?? 'Video bài học',
-                lessonId: lessonId ?? topic.lessonId,
-                topicId: topic.sId,
-                lessonTitle: lessonTitle,
+                videoLink: widget.topic.videoLink!,
+                topicTitle: widget.topic.title ?? 'Video bài học',
+                lessonId: widget.lessonId ?? widget.topic.lessonId,
+                topicId: widget.topic.sId,
+                lessonTitle: widget.lessonTitle,
               ),
               const SizedBox(height: 16),
             ],
@@ -82,7 +172,7 @@ class TopicLessonDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (lessonTitle.isNotEmpty) ...[
+                    if (widget.lessonTitle.isNotEmpty) ...[
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -93,7 +183,7 @@ class TopicLessonDetailPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          lessonTitle,
+                          widget.lessonTitle,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -106,7 +196,7 @@ class TopicLessonDetailPage extends StatelessWidget {
                       const SizedBox(height: 12),
                     ],
                     Text(
-                      topic.title ?? '',
+                      widget.topic.title ?? '',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w800,
                           ),

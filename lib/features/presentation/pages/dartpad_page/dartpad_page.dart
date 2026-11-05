@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:learn_flutter/features/data/services/dart_pad_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -146,7 +147,7 @@ class _DartPadPageState extends State<DartPadPage> {
     if (_useGist) {
       _controller.loadRequest(DartPadPage.gistUri(widget.gistId!, widget.runOnOpen));
     } else {
-      final code = widget.initialCode.trim();
+      final code = prepareDartPadSource(widget.initialCode).trim();
       final embedUrl =
           DartPadPage.embedUri(runOnOpen: widget.runOnOpen).toString();
       final html = DartPadPage.hostHtml(
@@ -171,8 +172,6 @@ class _DartPadPageState extends State<DartPadPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title ?? 'DartPad'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
       ),
       body: Stack(
         alignment: Alignment.center,

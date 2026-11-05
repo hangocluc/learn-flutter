@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:learn_flutter/common/utils/program_progress_utils.dart';
 import 'package:learn_flutter/features/data/entities/program_entity/program_entity.dart';
+import 'package:learn_flutter/features/presentation/widgets/app_loading_widget.dart';
 import 'package:learn_flutter/features/presentation/cubits/program_cubit/program_cubit.dart';
-import 'package:learn_flutter/features/presentation/pages/program_detail_page/program_detail_page.dart';
+import 'package:learn_flutter/features/presentation/pages/dart_playground_page/dart_playground_page.dart';
+import 'package:learn_flutter/features/presentation/pages/video_lesson_page/video_lesson_page.dart';
+import 'package:learn_flutter/main.dart';
 
 class ProgramListPage extends StatefulWidget {
   const ProgramListPage({super.key});
@@ -23,8 +27,6 @@ class _ProgramListPageState extends State<ProgramListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Programs'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -37,7 +39,7 @@ class _ProgramListPageState extends State<ProgramListPage> {
       body: BlocBuilder<ProgramCubit, ProgramCubitState>(
         builder: (context, state) {
           if (state is ProgramCubitLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingWidget.fullScreen();
           } else if (state is ProgramCubitError) {
             return Center(
               child: Column(
@@ -61,10 +63,18 @@ class _ProgramListPageState extends State<ProgramListPage> {
               ),
             );
           } else if (state is ProgramCubitLoaded) {
-            if (state.programs.isEmpty) {
+            final examples = state.programs
+                .expand(
+                  (program) =>
+                      program.programDetails ?? const <ProgramDetailEntity>[],
+                )
+                .toList()
+              ..sort(_compareExamplesByOrder);
+
+            if (examples.isEmpty) {
               return const Center(
                 child: Text(
-                  'No programs available',
+                  'No examples available',
                   style: TextStyle(fontSize: 16),
                 ),
               );
@@ -75,21 +85,50 @@ class _ProgramListPageState extends State<ProgramListPage> {
               },
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
-                itemCount: state.programs.length,
+                itemCount: examples.length,
                 itemBuilder: (context, index) {
-                  final program = state.programs[index];
-                  return _buildProgramCard(program);
+                  return _buildExampleCard(context, examples[index]);
                 },
               ),
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const AppLoadingWidget.fullScreen();
         },
       ),
     );
   }
 
-  Widget _buildProgramCard(ProgramEntity program) {
+  int _compareExamplesByOrder(
+    ProgramDetailEntity a,
+    ProgramDetailEntity b,
+  ) {
+    final aOrder = _extractOrderNumber(a.title);
+    final bOrder = _extractOrderNumber(b.title);
+
+    if (aOrder != null && bOrder != null) {
+      final orderCompare = aOrder.compareTo(bOrder);
+      if (orderCompare != 0) {
+        return orderCompare;
+      }
+    } else if (aOrder != null) {
+      return -1;
+    } else if (bOrder != null) {
+      return 1;
+    }
+
+    return (a.title ?? '').compareTo(b.title ?? '');
+  }
+
+  int? _extractOrderNumber(String? title) {
+    if (title == null || title.isEmpty) {
+      return null;
+    }
+
+    final match = RegExp(r'\d+').firstMatch(title);
+    return match == null ? null : int.tryParse(match.group(0)!);
+  }
+
+  Widget _buildExampleCard(BuildContext context, ProgramDetailEntity detail) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 4,
@@ -97,13 +136,35 @@ class _ProgramListPageState extends State<ProgramListPage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProgramDetailPage(program: program),
-            ),
+        onTap: () async {
+          await ProgramProgressUtils.markExplored(
+            getIt.get(),
+            detail.id,
           );
+
+          if (!context.mounted) return;
+
+          if (detail.hasVideo) {
+            Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => VideoLessonPage(
+                  title: detail.title ?? 'Video',
+                  source: detail.videoUrl!.trim(),
+                ),
+              ),
+            );
+          } else {
+            Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => DartPlaygroundPage(
+                  title: detail.title,
+                  initialCode: detail.content?.trim() ?? '',
+                ),
+              ),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -111,16 +172,20 @@ class _ProgramListPageState extends State<ProgramListPage> {
           child: Row(
             children: [
               Container(
-                width: 60,
-                height: 60,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
+                  color: detail.hasVideo
+                      ? Colors.deepPurple.shade100
+                      : Colors.green.shade100,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  Icons.code,
-                  size: 30,
-                  color: Colors.blue.shade600,
+                  detail.hasVideo ? Icons.ondemand_video : Icons.play_arrow,
+                  size: 24,
+                  color: detail.hasVideo
+                      ? Colors.deepPurple.shade600
+                      : Colors.green.shade600,
                 ),
               ),
               const SizedBox(width: 16),
@@ -129,17 +194,19 @@ class _ProgramListPageState extends State<ProgramListPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      program.name ?? 'Untitled Program',
+                      detail.title ?? 'Untitled Example',
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${program.programDetails?.length ?? 0} examples',
+                      detail.hasVideo
+                          ? 'Chạm để xem video bài học'
+                          : 'Chạm để mở editor và chạy thử code',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: Colors.grey.shade600,
                       ),
                     ),

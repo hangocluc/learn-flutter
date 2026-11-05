@@ -14,6 +14,11 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def releaseKeystoreFile = keystorePropertiesFile.exists()
+        ? file(keystoreProperties['storeFile'])
+        : file('javalab.jks')
+
+def hasReleaseKeystore = releaseKeystoreFile.exists()
 
 android {
     namespace = 'com.example.learn_flutter'
@@ -39,23 +44,39 @@ android {
         versionName = flutter.versionName
     }
 
-    def keystoreFile = file("javalab.jks")
+    def keystoreFile = releaseKeystoreFile
     signingConfigs {
-        if (keystoreFile.exists()) {
+        if (hasReleaseKeystore) {
             release {
-                keyAlias "javalab"
-                keyPassword "123456"
-                storeFile keystoreFile
-                storePassword "123456"
+                if (keystorePropertiesFile.exists()) {
+                    keyAlias keystoreProperties['keyAlias']
+                    keyPassword keystoreProperties['keyPassword']
+                    storeFile keystoreFile
+                    storePassword keystoreProperties['storePassword']
+                } else {
+                    keyAlias 'javalab'
+                    keyPassword '123456'
+                    storeFile keystoreFile
+                    storePassword '123456'
+                }
             }
         }
     }
 
     buildTypes {
         release {
-            if (keystoreFile.exists()) {
+            if (hasReleaseKeystore) {
                 signingConfig signingConfigs.release
+            } else {
+                throw new GradleException(
+                    'Release keystore not found. Copy android/app/javalab.jks to this machine ' +
+                    'or create android/key.properties (see android/key.properties.example).'
+                )
             }
+            proguardFiles(
+                getDefaultProguardFile('proguard-android-optimize.txt'),
+                'proguard-rules.pro',
+            )
         }
     }
 }

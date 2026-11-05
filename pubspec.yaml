@@ -103,6 +103,9 @@ dev_dependencies:
 dependency_overrides:
   # Avoid Color.withValues API usage from newer flutter_spinkit
   flutter_spinkit: 5.1.0
+  # Patched locally: remove deprecated Android v1 embedding API
+  native_shared_preferences:
+    path: packages/native_shared_preferences
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

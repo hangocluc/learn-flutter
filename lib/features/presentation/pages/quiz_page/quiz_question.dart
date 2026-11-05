@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:learn_flutter/features/data/services/ai_chat_service.dart';
+import 'package:learn_flutter/features/domain/entities/src/lesson/lesson_entity.dart';
 import '../../cubits/quiz_cubit/quiz_cubit.dart';
 import '../../cubits/quiz_cubit/quiz_state.dart';
 
@@ -148,6 +150,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       final cubit = context.read<QuizCubit>();
                       showResultBottomSheet(
                         context,
+                        question: question,
                         isCorrect: cubit.isCorrectAnswer(
                           question,
                           selectedAnswer,
@@ -181,6 +184,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
   void showResultBottomSheet(
     BuildContext context, {
+    required QuestionEntity question,
     required bool isCorrect,
     required VoidCallback onNext,
   }) {
@@ -188,48 +192,161 @@ class _QuizQuestionState extends State<QuizQuestion> {
       isDismissible: false,
       context: context,
       enableDrag: false,
-      isScrollControlled: false,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
-        return Container(
+      builder: (context) => _ResultBottomSheet(
+        question: question,
+        isCorrect: isCorrect,
+        onNext: onNext,
+      ),
+    );
+  }
+}
+
+class _ResultBottomSheet extends StatefulWidget {
+  const _ResultBottomSheet({
+    required this.question,
+    required this.isCorrect,
+    required this.onNext,
+  });
+
+  final QuestionEntity question;
+  final bool isCorrect;
+  final VoidCallback onNext;
+
+  @override
+  State<_ResultBottomSheet> createState() => _ResultBottomSheetState();
+}
+
+class _ResultBottomSheetState extends State<_ResultBottomSheet> {
+  final _ai = AiChatService();
+  String? _hint;
+  bool _loadingHint = false;
+  String? _hintError;
+
+  Future<void> _loadHint() async {
+    setState(() {
+      _loadingHint = true;
+      _hintError = null;
+    });
+    try {
+      final ai = _ai;
+      final prompt =
+          'Câu hỏi quiz: "${widget.question.content}"\n'
+          'Các đáp án: ${widget.question.answers.join(", ")}\n\n'
+          'Tôi đã trả lời sai. Hãy giải thích ngắn gọn gợi ý để tôi hiểu '
+          'đúng hướng (đừng nói thẳng đáp án, chỉ gợi ý để tôi tự tìm ra).';
+      final hint = await ai.sendMessage(userMessage: prompt);
+      if (mounted) setState(() => _hint = hint);
+    } catch (e) {
+      if (mounted) setState(() => _hintError = 'Không lấy được gợi ý: $e');
+    } finally {
+      if (mounted) setState(() => _loadingHint = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SingleChildScrollView(
+        child: Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                isCorrect ? Icons.check_circle : Icons.cancel,
-                color: isCorrect ? Colors.green : Colors.red,
+                widget.isCorrect ? Icons.check_circle : Icons.cancel,
+                color: widget.isCorrect ? Colors.green : Colors.red,
                 size: 64,
               ),
               const SizedBox(height: 12),
               Text(
-                isCorrect ? '🎉 Đáp án chính xác!' : 'Đáp án sai !',
-                style: TextStyle(
+                widget.isCorrect ? '🎉 Đáp án chính xác!' : 'Đáp án sai!',
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 42),
-              ElevatedButton.icon(
+
+              // Phần gợi ý AI — chỉ hiện khi sai
+              if (!widget.isCorrect) ...[
+                const SizedBox(height: 20),
+                if (_hint != null) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.amber[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.amber[300]!),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.lightbulb,
+                                color: Colors.amber[700], size: 18),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Gợi ý từ AI',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amber[800],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(_hint!, style: const TextStyle(fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                ] else if (_hintError != null) ...[
+                  Text(_hintError!,
+                      style: const TextStyle(color: Colors.red, fontSize: 13)),
+                ] else ...[
+                  OutlinedButton.icon(
+                    onPressed: _loadingHint ? null : _loadHint,
+                    icon: _loadingHint
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.lightbulb_outline),
+                    label: Text(_loadingHint ? 'Đang lấy gợi ý...' : 'Gợi ý từ AI'),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 44),
+                      foregroundColor: Colors.amber[800],
+                      side: BorderSide(color: Colors.amber[400]!),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+
+              const SizedBox(height: 20),
+              ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // đóng bottom sheet
-                  onNext(); // gọi callback chuyển câu tiếp theo
+                  Navigator.pop(context);
+                  widget.onNext();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      isCorrect ? Colors.green : Colors.red, // màu theo kết quả
+                  backgroundColor: widget.isCorrect ? Colors.green : Colors.red,
                   minimumSize: const Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                label: const Text(
+                child: const Text(
                   'Tiếp tục',
                   style: TextStyle(
                     fontSize: 16,
@@ -241,8 +358,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
               const SizedBox(height: 10),
             ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

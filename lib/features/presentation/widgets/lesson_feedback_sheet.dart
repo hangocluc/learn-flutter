@@ -8,6 +8,7 @@ import 'package:learn_flutter/common/utils/snack_bar_utils.dart';
 import 'package:learn_flutter/features/data/models/feedback/system_feedback_request_model.dart';
 import 'package:learn_flutter/features/data/models/lesson_model/lesson_feedback_request_model.dart';
 import 'package:learn_flutter/core/base/src/api_response.dart';
+import 'package:learn_flutter/core/storage/storage_manager.dart';
 import 'package:learn_flutter/features/data/providers/feedback_service/feedback_service.dart';
 import 'package:learn_flutter/main.dart';
 
@@ -142,9 +143,16 @@ class _FeedbackFormState extends State<_FeedbackForm> {
     setState(() => _submitting = true);
 
     try {
-      final prefs = getIt<AppSharedPreferences>();
-      final userId =
-          prefs.get(AppSharedPreferencesKey.userId) as String?;
+      final userId = await _resolveUserId();
+      if (userId == null || userId.isEmpty) {
+        if (!mounted) return;
+        showSnackBarFail(
+          context,
+          title: 'Please sign in with Google before sending feedback.',
+        );
+        return;
+      }
+
       final feedbackService = getIt<FeedbackService>();
 
       final ApiResponse<dynamic> response;
@@ -194,6 +202,15 @@ class _FeedbackFormState extends State<_FeedbackForm> {
     }
   }
 
+  Future<String?> _resolveUserId() async {
+    final prefs = getIt<AppSharedPreferences>();
+    final fromPrefs = prefs.getString(AppSharedPreferencesKey.userId);
+    if (fromPrefs != null && fromPrefs.isNotEmpty) {
+      return fromPrefs;
+    }
+    return StorageManager.getUserId();
+  }
+
   String _platformLabel() {
     if (kIsWeb) return 'web';
     return Platform.operatingSystem;
@@ -207,22 +224,13 @@ class _FeedbackFormState extends State<_FeedbackForm> {
         _isLesson ? LessonFeedbackSheet._lessonErrorTypes : LessonFeedbackSheet._systemCategories;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 12, 20, 20 + bottomInset),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: scheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           Text(
             _isLesson ? 'Báo lỗi bài học' : 'System Feedback',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -312,6 +320,7 @@ class _FeedbackFormState extends State<_FeedbackForm> {
             child: Text(_isLesson ? 'Đóng' : 'Close'),
           ),
         ],
+        ),
       ),
     );
   }
